@@ -10,7 +10,11 @@
 #ifndef XEUS_DEBUGGER_HPP
 #define XEUS_DEBUGGER_HPP
 
+#ifndef EMSCRIPTEN
 #include "zmq.hpp"
+#else
+#include "wasm/zmq.hpp"
+#endif
 #include "nlohmann/json.hpp"
 
 #include "xeus.hpp"

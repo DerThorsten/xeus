@@ -1,4 +1,9 @@
+#ifndef EMSCRIPTEN
 #include "zmq_addon.hpp"
+#else
+#include "wasm/zmq.hpp"
+#endif
+
 #include "nlohmann/json.hpp"
 #include "xeus/xmessage.hpp"
 #include "xeus/xdap_tcp_client.hpp"

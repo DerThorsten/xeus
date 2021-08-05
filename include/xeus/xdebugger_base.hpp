@@ -19,7 +19,11 @@
 #include <string>
 #include <vector>
 
+#ifndef EMSCRIPTEN
 #include "zmq.hpp"
+#else
+#include "wasm/zmq.hpp"
+#endif
 #include "nlohmann/json.hpp"
 
 #include "xdebugger.hpp"

@@ -10,7 +10,11 @@
 #include <string>
 #include <random>
 
+#ifndef EMSCRIPTEN
 #include "zmq_addon.hpp"
+#else
+#include "wasm/zmq.hpp"
+#endif
 #include "xeus/xmiddleware.hpp"
 
 namespace xeus

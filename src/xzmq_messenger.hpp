@@ -10,8 +10,13 @@
 #ifndef XEUS_ZMQ_MESSENGER_HPP
 #define XEUS_ZMQ_MESSENGER_HPP
 
+
+#ifndef EMSCRIPTEN
 #include "zmq.hpp"
 #include "zmq_addon.hpp"
+#else
+#include "xeus/wasm/zmq.hpp"
+#endif
 
 #include "nlohmann/json.hpp"
 

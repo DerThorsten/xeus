@@ -16,9 +16,13 @@
 #include "nlohmann/json.hpp"
 
 #include "xauthentication.hpp"
-#include "xeus.hpp"
-#include "zmq_addon.hpp"
 
+#include "xeus.hpp"
+#ifndef EMSCRIPTEN
+#include "zmq_addon.hpp"
+#else
+#include "wasm/zmq.hpp"
+#endif
 namespace nl = nlohmann;
 
 namespace xeus

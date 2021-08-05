@@ -12,13 +12,21 @@
 
 #include <string>
 
+
+
+#ifndef EMSCRIPTEN
 #include "zmq.hpp"
 #include "zmq_addon.hpp"
+#else
+#include "xeus/wasm/zmq.hpp"
+#endif
+
+#include "xeus/xserver.hpp"
 #include "xzmq_messenger.hpp"
 
 namespace xeus
 {
-    class xserver_zmq_split;
+    //class xserver_zmq_split;
 
     class xcontrol
     {
@@ -30,7 +38,7 @@ namespace xeus
                  const std::string& transport,
                  const std::string& ip,
                  const std::string& control_port,
-                 xserver_zmq_split* server);
+                 xserver* server);
 
         ~xcontrol();
 
@@ -51,7 +59,7 @@ namespace xeus
         zmq::socket_t m_publisher_pub;
         // Internal sockets for controlling other threads
         xzmq_messenger m_messenger;
-        xserver_zmq_split* p_server;
+        xserver* p_server;
         bool m_request_stop;
     };
 }

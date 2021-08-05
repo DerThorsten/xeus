@@ -13,8 +13,12 @@
 #include <functional>
 #include <memory>
 
+#ifndef EMSCRIPTEN
 #include "zmq.hpp"
 #include "zmq_addon.hpp"
+#else
+#include "wasm/zmq.hpp"
+#endif
 
 #include "xeus.hpp"
 #include "xkernel_configuration.hpp"

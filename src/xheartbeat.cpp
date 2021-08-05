@@ -10,7 +10,11 @@
 #include <iterator>
 #include <string>
 
+#ifndef EMSCRIPTEN
 #include "zmq_addon.hpp"
+#else
+#include "xeus/wasm/zmq.hpp"
+#endif
 #include "xeus/xmiddleware.hpp"
 #include "xheartbeat.hpp"
 

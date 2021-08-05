@@ -12,7 +12,7 @@
 #include <iostream>
 
 #include "xeus/xmiddleware.hpp"
-#include "xeus/xserver_zmq_split.hpp"
+#include "xeus/xserver.hpp"
 #include "xcontrol.hpp"
 
 namespace xeus
@@ -21,7 +21,7 @@ namespace xeus
                        const std::string& transport,
                        const std::string& ip,
                        const std::string& control_port,
-                       xserver_zmq_split* server)
+                       xserver* server)
         : m_control(context, zmq::socket_type::router)
         , m_publisher_pub(context, zmq::socket_type::pub)
         , m_messenger(context)

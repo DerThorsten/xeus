@@ -10,6 +10,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 #include "nlohmann/json.hpp"
 
@@ -22,6 +23,7 @@ namespace xeus
     xinterpreter::xinterpreter()
         : m_execution_count(0)
     {
+        std::cout<<"constucted\n";
     }
 
     void xinterpreter::configure()

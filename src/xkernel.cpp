@@ -9,6 +9,7 @@
 
 #include <string>
 #include <random>
+#include <iostream>
 
 #include "xeus/xkernel.hpp"
 #include "xeus/xguid.hpp"
@@ -89,7 +90,9 @@ namespace xeus
         , m_debugger_config(debugger_config)
         , m_error_handler(eh)
     {
+        std::cout<<"init xkernel\n";
         init();
+        std::cout<<"init xkernel done\n";
     }
 
     xkernel::xkernel(const std::string& user_name,
@@ -114,6 +117,7 @@ namespace xeus
 
     xkernel::~xkernel()
     {
+        std::cout<<"xkernel destructor\n";
     }
 
     void xkernel::init()
@@ -164,8 +168,11 @@ namespace xeus
 
     void xkernel::start()
     {
+        std::cout<<"xkernel::start()\n";
         zmq::multipart_t start_msg = p_core->build_start_msg();
+        std::cout<<"server start\n";
         p_server->start(start_msg);
+        std::cout<<"xkernel::start() done\n";
     }
 
     const xconfiguration& xkernel::get_config()

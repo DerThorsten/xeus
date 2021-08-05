@@ -13,6 +13,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "xcomm.hpp"
 #include "xeus.hpp"
@@ -31,7 +32,9 @@ namespace xeus
     public:
 
         xinterpreter();
-        virtual ~xinterpreter() = default;
+        virtual ~xinterpreter() {
+            std::cout<<"destruct interpreter\n";
+        }
 
         xinterpreter(const xinterpreter&) = delete;
         xinterpreter& operator=(const xinterpreter&) = delete;

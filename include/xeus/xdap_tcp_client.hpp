@@ -5,7 +5,11 @@
 #include <deque>
 #include <string>
 
+#ifndef EMSCRIPTEN
 #include "zmq.hpp"
+#else
+#include "wasm/zmq.hpp"
+#endif
 
 #include "nlohmann/json.hpp"
 
