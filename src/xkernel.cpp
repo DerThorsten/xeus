@@ -128,7 +128,9 @@ namespace xeus
 
     void xkernel::init()
     {
+        std::cout<<"new_xguid"<<std::endl;
         m_kernel_id = new_xguid();
+        std::cout<<"new_xguid"<<std::endl;
         m_session_id = new_xguid();
 
         if (m_config.m_key.size() == 0)
@@ -136,6 +138,7 @@ namespace xeus
             m_config.m_key = new_xguid();
         }
 
+        std::cout<<"auth"<<std::endl;
         using authentication_ptr = xkernel_core::authentication_ptr;
         authentication_ptr auth = make_xauthentication(m_config.m_signature_scheme, m_config.m_key);
 
@@ -143,12 +146,16 @@ namespace xeus
         {
             p_logger = std::make_unique<xlogger_nolog>();
         }
-
+        std::cout<<"build server"<<std::endl;
         p_server = m_server_builder(m_context, m_config);
+
+        std::cout<<"update_config"<<std::endl;
         p_server->update_config(m_config);
 
+        std::cout<<"build debugger"<<std::endl;
         p_debugger = m_debugger_builder(m_context, m_config, m_user_name, m_session_id, m_debugger_config);
 
+        std::cout<<"p_core"<<std::endl;
         p_core = std::make_unique<xkernel_core>(m_kernel_id,
                                                 m_user_name,
                                                 m_session_id,
@@ -159,7 +166,7 @@ namespace xeus
                                                 p_history_manager.get(),
                                                 p_debugger.get(),
                                                 m_error_handler);
-
+        std::cout<<"get_control_messenger"<<std::endl;
         xcontrol_messenger& messenger = p_server->get_control_messenger();
 
         if(p_debugger != nullptr)
@@ -167,9 +174,14 @@ namespace xeus
             p_debugger->register_control_messenger(messenger);
         }
 
+        std::cout<<"register_control_messenger"<<std::endl;
         p_interpreter->register_control_messenger(messenger);
+        std::cout<<"register_history_manager"<<std::endl;
         p_interpreter->register_history_manager(*p_history_manager);
+        std::cout<<"configure"<<std::endl;
         p_interpreter->configure();
+        std::cout<<"configure done"<<std::endl;
+
     }
 
     void xkernel::start()

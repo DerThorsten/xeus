@@ -57,7 +57,8 @@ set(xeus_TARGET xeus-static)
 # =======================
 
 set(fobar.cpp)
-add_executable(fobar fobar.cpp)
+add_executable(fobar fobar.cpp
+    test_interpreter.cpp)
 target_link_libraries(fobar PRIVATE ${xeus_TARGET})# Threads::Threads)
 # target_compile_features(test_kernel_shell PRIVATE cxx_std_11)
 

@@ -17,13 +17,16 @@ namespace nl = nlohmann;
 
 namespace test_kernel
 {
+    
 
     void test_interpreter::configure_impl()
     {
         auto handle_comm_opened = [](xeus::xcomm&& comm, const xeus::xmessage&) {
             std::cout << "Comm opened for target: " << comm.target().name() << std::endl;
         };
+        std::cout<<"register_comm_target"<<std::endl;
         comm_manager().register_comm_target("test_target", handle_comm_opened);
+        std::cout<<"register_comm_target done"<<std::endl;
         using function_type = std::function<void(xeus::xcomm&&, const xeus::xmessage&)>;
     }
 
