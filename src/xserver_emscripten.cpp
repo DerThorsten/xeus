@@ -75,6 +75,12 @@ namespace xeus
     {
 
     }
+
+
+    std::unique_ptr<xserver> make_xserver_emscripten(zmq::context_t& context, const xconfiguration& config)
+    {
+        return std::make_unique<xserver_emscripten>(config);
+    }
 }
 
 

@@ -25,7 +25,39 @@ enum class socket_type : int
     pull
 };
 
+enum class send_flags : int
+{
+    none = 0,
+    dontwait =1,
+    sndmore = 2
+};
 
+class const_buffer
+{
+};
+
+namespace sockopt
+{
+
+    constexpr int linger = 0;
+// There are two types of options,
+// integral type with known compiler time size (int, bool, int64_t, uint64_t)
+// and arrays with dynamic size (strings, binary data).
+
+// BoolUnit: if true accepts values of type bool (but passed as T into libzmq)
+template<int Opt, class T, bool BoolUnit = false> struct integral_option
+{
+};
+
+// NullTerm:
+// 0: binary data
+// 1: null-terminated string (`getsockopt` size includes null)
+// 2: binary (size 32) or Z85 encoder string of size 41 (null included)
+template<int Opt, int NullTerm = 1> struct array_option
+{
+};
+
+}
 
 struct context_t
 {};
@@ -34,11 +66,33 @@ struct socket_t
 {
     socket_t(context_t &context_, int type_){}
     socket_t(context_t &context_, socket_type type_){}
+
+
+    template<class ... args >
+    void set(args && ... )
+    {
+    }
+
+    template<class ... args >
+    std::size_t send(args && ... )
+    {
+        return 0;
+    }
+    template<class ... args >
+    std::size_t recv(args && ... )
+    {
+        return 0;
+    }
+    
 };
 
 class message_t
 {
 public:
+    message_t()
+    : m_data(){
+    }
+
     message_t(const void * src, std::size_t size)
     : m_data(static_cast<const uint8_t *>(src),static_cast<const uint8_t *>(src) + size)
     {   

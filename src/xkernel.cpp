@@ -40,9 +40,14 @@ namespace xeus
 {
     std::string get_user_name()
     {
-#if (defined(LINUX_PLATFORM) || defined(APPLE_PLATFORM))
+#if ((defined(LINUX_PLATFORM) || defined(APPLE_PLATFORM))  && !defined(EMSCRIPTEN))
         struct passwd* pws;
-        pws = getpwuid(geteuid());
+        std::cout<<"geteuid\n";
+        auto euid = geteuid();
+        std::cout<<"geteuid done\n";
+        std::cout<<"getpwuid\n";
+        pws = getpwuid(euid);
+        std::cout<<"getpwuid done\n";
         if (pws != nullptr)
         {
             std::string res = pws->pw_name;
@@ -69,6 +74,7 @@ namespace xeus
 #else
         return "unspecified user";
 #endif
+        std::cout<<"got user name\n";
     }
 
     xkernel::xkernel(const xconfiguration& config,
@@ -90,7 +96,7 @@ namespace xeus
         , m_debugger_config(debugger_config)
         , m_error_handler(eh)
     {
-        std::cout<<"init xkernel\n";
+        std::cout<<"init xkernel"<<std::endl;
         init();
         std::cout<<"init xkernel done\n";
     }

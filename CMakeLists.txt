@@ -22,7 +22,7 @@ if(CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
   message(" * C++ compiler: Emscripten")
   set(CMAKE_CXX_COMPILER_ID "Emscripten")
     add_compile_definitions(EMSCRIPTEN)
-
+    add_compile_definitions(EMSCRIPTEN_ZMQ_REPLACEMENT)
 
     # set(CMAKE_AR "emcc" CACHE)
     #set(CMAKE_STATIC_LIBRARY_SUFFIX ".bc")
@@ -31,7 +31,7 @@ if(CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
 
 
 
-    set(EMSCRIPTEN_FEATURES "-s WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s USE_PTHREADS=1 -s  DEMANGLE_SUPPORT=1 -s SAFE_HEAP=1 -s EXIT_RUNTIME=1 -s ASSERTIONS=2   -s STACK_OVERFLOW_CHECK=1 -s TOTAL_MEMORY=512MB")
+    set(EMSCRIPTEN_FEATURES "-s WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s USE_PTHREADS=1 -s  DEMANGLE_SUPPORT=1 -s SAFE_HEAP=1 -s EXIT_RUNTIME=1 -s ASSERTIONS=2   -s STACK_OVERFLOW_CHECK=1 -s TOTAL_MEMORY=512MB")
     set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -Wno-deprecated")
     #set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s SAFE_HEAP_LOG=1")
     set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s DISABLE_EXCEPTION_CATCHING=0 ")
@@ -118,7 +118,7 @@ if (NOT TARGET cppzmq AND NOT TARGET cppzmq-static)
 endif ()
 
 
-if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
+#if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
     find_package(ZeroMQ  REQUIRED)
 
     if (NOT TARGET libzmq AND NOT TARGET libzmq-static)
@@ -142,7 +142,7 @@ if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
              endif ()
         endif ()
     endif ()
-endif()
+#endif()
 
 if (NOT DEFINED OPENSSL_LIBRARY)
     set(OPENSSL_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
@@ -158,8 +158,8 @@ set(XEUS_HEADERS
     ${XEUS_INCLUDE_DIR}/xeus/xcomm.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xcontrol_messenger.hpp
     #${XEUS_INCLUDE_DIR}/xeus/xdap_tcp_client.hpp
-    #${XEUS_INCLUDE_DIR}/xeus/xdebugger.hpp
-    #${XEUS_INCLUDE_DIR}/xeus/xdebugger_base.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xdebugger.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xdebugger_base.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xeus.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xguid.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xhistory_manager.hpp
@@ -186,8 +186,8 @@ set(XEUS_SOURCES
     # ${XEUS_SOURCE_DIR}/xcontrol.cpp
     ${XEUS_SOURCE_DIR}/xcontrol_messenger.cpp
     #${XEUS_SOURCE_DIR}/xdap_tcp_client.cpp
-    #${XEUS_SOURCE_DIR}/xdebugger.cpp
-    #${XEUS_SOURCE_DIR}/xdebugger_base.cpp
+    ${XEUS_SOURCE_DIR}/xdebugger.cpp
+    ${XEUS_SOURCE_DIR}/xdebugger_base.cpp
     ${XEUS_SOURCE_DIR}/xguid.cpp
     # ${XEUS_SOURCE_DIR}/xheartbeat.cpp
     # ${XEUS_SOURCE_DIR}/xheartbeat.hpp
@@ -315,7 +315,7 @@ macro(xeus_create_target target_name linkage output_name)
         $<INSTALL_INTERFACE:include>
     )
 
-    if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
+    if( CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
         message(STATUS  ${CPPZMQ_TARGET_NAME})
         target_link_libraries(
             ${target_name}

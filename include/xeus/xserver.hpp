@@ -13,7 +13,7 @@
 #include <functional>
 #include <memory>
 
-#ifndef EMSCRIPTEN
+#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
 #include "zmq.hpp"
 #include "zmq_addon.hpp"
 #else

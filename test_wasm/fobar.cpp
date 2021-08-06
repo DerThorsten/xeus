@@ -17,7 +17,7 @@
 #include "test_interpreter.hpp"
 #include "xeus/xkernel.hpp"
 #include "xeus/xkernel_configuration.hpp"
-#include "xeus/xserver_shell_main.hpp"
+#include "xeus/xserver_emscripten.hpp"
 
 
 template<class smart_ptr>
@@ -57,12 +57,12 @@ int main(int argc, char* argv[])
     auto interpreter = interpreter_ptr(new test_kernel::test_interpreter());
     
     std::cout<<"done\n";
-    // xeus::xkernel kernel(config,
-    //                      xeus::get_user_name(),
-    //                      std::move(interpreter),
-    //                      std::move(hist),
-    //                      nullptr,
-    //                      xeus::make_xserver_shell_main);
+    xeus::xkernel kernel(config,
+                         xeus::get_user_name(),
+                         std::move(interpreter),
+                         std::move(hist),
+                         nullptr,
+                         xeus::make_xserver_emscripten);
     std::cout << "starting kernel" << std::endl;
     //kernel.start();
     std::cout<<"done 2\n";
@@ -72,8 +72,8 @@ int main(int argc, char* argv[])
     //     std::cout << i << std::endl;
     //     std::this_thread::sleep_for (std::chrono::seconds(1));
     // }
-    std::cout << "Lift off!\n";
-    auto leak = new leak_it<interpreter_ptr>(std::move(interpreter));
-    std::cout << "Lift done!\n";
+    // std::cout << "Lift off!\n";
+    // auto leak = new leak_it<interpreter_ptr>(std::move(interpreter));
+    // std::cout << "Lift done!\n";
     return 0;
 }

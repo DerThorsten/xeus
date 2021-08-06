@@ -10,7 +10,7 @@
 #ifndef XEUS_CONTROL_MESSENGER_HPP
 #define XEUS_CONTROL_MESSENGER_HPP
 
-#ifndef EMSCRIPTEN
+#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
 #include "zmq.hpp"
 #include "zmq_addon.hpp"
 #else

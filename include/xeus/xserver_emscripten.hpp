@@ -55,6 +55,10 @@ namespace xeus
         trivial_messenger_ptr p_messenger;
 
     };
+
+
+    XEUS_API
+    std::unique_ptr<xserver> make_xserver_emscripten(zmq::context_t& context, const xconfiguration& config);
 }
 
 #endif

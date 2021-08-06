@@ -10,7 +10,7 @@
 #ifndef XEUS_DEBUGGER_HPP
 #define XEUS_DEBUGGER_HPP
 
-#ifndef EMSCRIPTEN
+#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
 #include "zmq.hpp"
 #else
 #include "wasm/zmq.hpp"

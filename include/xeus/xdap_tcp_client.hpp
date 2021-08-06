@@ -5,7 +5,7 @@
 #include <deque>
 #include <string>
 
-#ifndef EMSCRIPTEN
+#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
 #include "zmq.hpp"
 #else
 #include "wasm/zmq.hpp"
