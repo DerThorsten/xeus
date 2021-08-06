@@ -18,14 +18,15 @@ namespace test_kernel
 
     public:
 
-        test_interpreter() = default;
-        virtual ~test_interpreter() {
-            std::cout<<"destruct interpreter"<<std::endl;
-        }
+        test_interpreter()
+        : xeus::xinterpreter()
+        {
 
+        }
+        ~test_interpreter() = default;
     private:
 
-        void configure_impl() ;
+        void configure_impl();
 
         nl::json execute_request_impl(int execution_counter,
                                       const std::string& code,

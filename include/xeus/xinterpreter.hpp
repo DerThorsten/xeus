@@ -30,11 +30,12 @@ namespace xeus
     class XEUS_API xinterpreter
     {
     public:
-
         xinterpreter();
         virtual ~xinterpreter() {
             std::cout<<"destruct interpreter\n";
         }
+
+
 
         xinterpreter(const xinterpreter&) = delete;
         xinterpreter& operator=(const xinterpreter&) = delete;
@@ -60,9 +61,9 @@ namespace xeus
         void shutdown_request();
 
         nl::json internal_request(const nl::json& message);
+        using publisher_type = std::function<void(const std::string&, nl::json, nl::json, buffer_sequence)>;
 
         // publish(msg_type, metadata, content)
-        using publisher_type = std::function<void(const std::string&, nl::json, nl::json, buffer_sequence)>;
         void register_publisher(const publisher_type& publisher);
 
         void publish_stream(const std::string& name, const std::string& text);
@@ -128,7 +129,7 @@ namespace xeus
         virtual nl::json internal_request_impl(const nl::json& message);
 
         nl::json build_display_content(nl::json data, nl::json metadata, nl::json transient);
-
+    
         publisher_type m_publisher;
         stdin_sender_type m_stdin;
         int m_execution_count;
@@ -138,7 +139,6 @@ namespace xeus
         xcontrol_messenger* p_messenger;
         const xhistory_manager* p_history;
     };
-
     inline xcomm_manager& xinterpreter::comm_manager() noexcept
     {
         return *p_comm_manager;

@@ -19,6 +19,18 @@
 #include "xeus/xkernel_configuration.hpp"
 #include "xeus/xserver_shell_main.hpp"
 
+
+template<class smart_ptr>
+struct leak_it
+{
+    leak_it(smart_ptr && ptr)
+    : m_ptr(std::move(ptr))
+    {
+
+    }
+    smart_ptr m_ptr;
+};
+
 int main(int argc, char* argv[])
 {
     // std::cout<<"Hello world\n";
@@ -26,7 +38,7 @@ int main(int argc, char* argv[])
     // // xeus::xconfiguration config = xeus::load_configuration(file_name);
 
 
-    // xeus::xconfiguration config;
+    xeus::xconfiguration config;
     // // config.m_transport = doc["transport"].get<std::string>();
     // // config.m_ip = doc["ip"].get<std::string>();
     // // config.m_control_port = std::to_string(doc["control_port"].get<int>());
@@ -38,11 +50,11 @@ int main(int argc, char* argv[])
 
 
 
-    // using history_manager_ptr = std::unique_ptr<xeus::xhistory_manager>;
-    // history_manager_ptr hist = xeus::make_in_memory_history_manager();
+    using history_manager_ptr = std::unique_ptr<xeus::xhistory_manager>;
+    history_manager_ptr hist = xeus::make_in_memory_history_manager();
     
     using interpreter_ptr = std::unique_ptr<test_kernel::test_interpreter>;
-    interpreter_ptr interpreter = interpreter_ptr(new test_kernel::test_interpreter());
+    auto interpreter = interpreter_ptr(new test_kernel::test_interpreter());
     
     std::cout<<"done\n";
     // xeus::xkernel kernel(config,
@@ -61,6 +73,7 @@ int main(int argc, char* argv[])
     //     std::this_thread::sleep_for (std::chrono::seconds(1));
     // }
     std::cout << "Lift off!\n";
-
+    auto leak = new leak_it<interpreter_ptr>(std::move(interpreter));
+    std::cout << "Lift done!\n";
     return 0;
 }

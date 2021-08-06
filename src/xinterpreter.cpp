@@ -19,7 +19,7 @@
 namespace nl = nlohmann;
 
 namespace xeus
-{
+{   
     xinterpreter::xinterpreter()
         : m_execution_count(0)
     {
@@ -257,4 +257,5 @@ namespace xeus
         res["transient"] = std::move(transient);
         return res;
     }
+
 }

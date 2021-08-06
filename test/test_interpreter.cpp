@@ -27,6 +27,7 @@ namespace test_kernel
         using function_type = std::function<void(xeus::xcomm&&, const xeus::xmessage&)>;
     }
 
+    #if 0
     nl::json test_interpreter::execute_request_impl(int execution_counter,
                                                     const std::string& code,
                                                     bool /* silent */,
@@ -128,4 +129,5 @@ namespace test_kernel
     void test_interpreter::shutdown_request_impl()
     {
     }
+    #endif
 }
