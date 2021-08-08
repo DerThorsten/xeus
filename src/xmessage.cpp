@@ -6,7 +6,7 @@
 *                                                                          *
 * The full license is in the file LICENSE, distributed with this software. *
 ****************************************************************************/
-
+#include <iostream>
 #include <chrono>
 #include <cstddef>
 #include <stdexcept>
@@ -61,6 +61,7 @@ namespace xeus
 
     void xmessage_base::deserialize(zmq::multipart_t& wire_msg, const xauthentication& auth)
     {
+        std::cout<<"the deserialize of "<<wire_msg.str()<<"\n";
         zmq::message_t signature = wire_msg.pop();
         zmq::message_t header = wire_msg.pop();
         zmq::message_t parent_header = wire_msg.pop();

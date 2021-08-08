@@ -5,6 +5,9 @@
 #include "xeus/xserver.hpp"
 #include "xeus/xkernel_configuration.hpp"
 
+#include <emscripten/websocket.h>
+#include <emscripten.h>
+
 namespace xeus
 {
 
@@ -34,6 +37,9 @@ namespace xeus
         ~xserver_emscripten() = default;
 
         using xserver::notify_internal_listener;
+
+        void loop_func();
+
 
     protected:
 

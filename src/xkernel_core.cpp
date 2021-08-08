@@ -200,6 +200,7 @@ namespace xeus
 
     void xkernel_core::dispatch(zmq::multipart_t& wire_msg, channel c)
     {
+        std::cout<<"dispatch!\n";
         xmessage msg;
         try
         {
