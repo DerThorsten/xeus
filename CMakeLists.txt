@@ -7,7 +7,7 @@
 # The full license is in the file LICENSE, distributed with this software. #
 ############################################################################
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.12)
 project(xeus)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
@@ -36,7 +36,7 @@ if(CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
     #set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s SAFE_HEAP_LOG=1")
     set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s DISABLE_EXCEPTION_CATCHING=0 ")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMSCRIPTEN_FEATURES}")
-    set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS}  ${EMSCRIPTEN_FEATURES} -I /home/derthorsten/include -L /home/derthorsten/wasi/lib -lcryto -lssl -llibzmq  -s USE_PTHREADS=1 ")
+    set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS}  ${EMSCRIPTEN_FEATURES}  -s USE_PTHREADS=1 ")
 
 
 else()
@@ -86,6 +86,16 @@ option(XEUS_STATIC_DEPENDENCIES "link statically with xeus dependencies" OFF)
 option(XEUS_BUILD_TESTS "xeus test suite" OFF)
 option(XEUS_DOWNLOAD_GTEST "build gtest from downloaded sources" OFF)
 
+
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
+    set(XEUS_BUILD_TESTS OFF)
+    set(XEUS_DOWNLOAD_GTEST OFF)
+    set(XEUS_DISABLE_ARCH_NATIVE ON)
+    set(XEUS_BUILD_SHARED_LIBS OFF)
+    set(XEUS_BUILD_STATIC_LIBS ON)
+endif()
+
 # Static build configuration
 # ==========================
 
@@ -113,12 +123,14 @@ if (NOT TARGET xtl)
     find_package(xtl ${xtl_REQUIRED_VERSION} REQUIRED)
 endif ()
 
-if (NOT TARGET cppzmq AND NOT TARGET cppzmq-static)
-    find_package(cppzmq ${cppzmq_REQUIRED_VERSION} REQUIRED)
-endif ()
+if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
+
+    if (NOT TARGET cppzmq AND NOT TARGET cppzmq-static)
+        find_package(cppzmq ${cppzmq_REQUIRED_VERSION} REQUIRED)
+    endif ()
 
 
-#if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
+
     find_package(ZeroMQ  REQUIRED)
 
     if (NOT TARGET libzmq AND NOT TARGET libzmq-static)
@@ -142,13 +154,15 @@ endif ()
              endif ()
         endif ()
     endif ()
-#endif()
-
+else()
+    message(STATUS "NO ZQM")
+endif()
+set(OPENSSL_USE_STATIC_LIBS TRUE)
 if (NOT DEFINED OPENSSL_LIBRARY)
     set(OPENSSL_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
     find_package(OpenSSL REQUIRED)
 endif ()
-
+find_package(OpenSSL REQUIRED)
 # Source files
 # ============
 
@@ -315,7 +329,7 @@ macro(xeus_create_target target_name linkage output_name)
         $<INSTALL_INTERFACE:include>
     )
 
-    if( CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
+    if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
         message(STATUS  ${CPPZMQ_TARGET_NAME})
         target_link_libraries(
             ${target_name}
@@ -330,8 +344,10 @@ macro(xeus_create_target target_name linkage output_name)
 
 
 
-    target_link_libraries(${target_name} PUBLIC OpenSSL::Crypto)
-    target_link_libraries(${target_name} PUBLIC OpenSSL::SSL)
+    # message(STATUS "INCDIR" ${OPENSSL_INCLUDE_DIR})
+    target_link_libraries(${target_name} PUBLIC ${OPENSSL_CRYPTO_LIBRARY})
+    target_link_libraries(${target_name} PUBLIC ${OPENSSL_SSL_LIBRARY})
+
 
     if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
         if (NOT MSVC)
@@ -429,7 +445,8 @@ if (XEUS_BUILD_SHARED_LIBS)
         # Do not reexport OpenSSL symbols from xeus, for libraries
         #   Prevents conflicts with other versions of OpenSSL
         #   loaded in the same process namespace, which can cause
-        #   crashes if the versions are not compatible        set_target_properties(xeus PROPERTIES LINK_FLAGS "-Wl,--exclude-libs,libcrypto.a")
+        #   crashes if the versions are not compatible        
+        # set_target_properties(xeus PROPERTIES LINK_FLAGS "-Wl,--exclude-libs,libcrypto.a")
     endif()
     list(APPEND xeus_targets xeus)
 endif ()
