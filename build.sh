@@ -9,12 +9,12 @@ export CPPFLAGS="${OPTIMIZE}"
 
 echo "thepwd"  $PWD
 mkdir -p dist
-cd /embuild/test_wasm
+cd /embuild/wasm
 pwd
 echo "root"
 ls
 ls
-cp fobar.{js,wasm} /src/dist
+cp *.{js,wasm} /src/dist
 # echo "============================================="
 # echo "Compiling wasm bindings"
 # echo "============================================="

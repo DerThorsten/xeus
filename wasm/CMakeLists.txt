@@ -24,17 +24,7 @@ if(nlohmann_json_FOUND)
 endif()
 
 
-
-
-# set(EMSCRIPTEN_FEATURES "-s WASM=1")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMSCRIPTEN_FEATURES}")
-# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMSCRIPTEN_FEATURES}")
-# set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} ${EMSCRIPTEN_FEATURES}")
-
-
 find_package(Threads)
-
-
 
 if(nlohmann_json_FOUND)
     # Version up to 3.1.2 export the target `nlohmann_json`
@@ -56,18 +46,7 @@ set(xeus_TARGET xeus-static)
 # Test_kernel_shell tests
 # =======================
 
-set(fobar.cpp)
-add_executable(fobar fobar.cpp
+
+add_executable(xeus_dummy xeus_dummy.cpp
     test_interpreter.cpp)
-target_link_libraries(fobar PRIVATE ${xeus_TARGET})# Threads::Threads)
-  # target_link_libraries(fobar PUBLIC ${DOPENSSL_CRYPTO_LIBRARY})
-  # target_link_libraries(fobar PUBLIC ${DOPENSSL_SSL_LIBRARY})
-
-# target_compile_features(test_kernel_shell PRIVATE cxx_std_11)
-
-# set(CONNECTION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/connection.json)
-
-# configure_file(
-#     "${XEUS_TEST_DIR}/test_kernel_shell.py"
-#     "${CMAKE_CURRENT_BINARY_DIR}/"
-#     COPYONLY)
+target_link_libraries(xeus_dummy PRIVATE ${xeus_TARGET})

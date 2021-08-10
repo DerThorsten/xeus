@@ -1,0 +1,72 @@
+<html>
+    <body>
+        <p id="output" />
+        <script>
+
+
+            let btn = document.createElement("button");
+            btn.innerHTML = "Click Me";
+            btn.onclick = function () {
+
+
+              // s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+              // s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+              // s.bind(('0.0.0.0', 8088))
+              // s.send('aa')
+
+
+              // console.log(exampleSocket.send("Here's some text that the server is urgently awaiting!"));
+            };
+            document.body.appendChild(btn);
+
+            var Module = {
+              onRuntimeInitialized: function() {
+                //console.log('lerp result: ' + Module.lerp(1, 2, 0.5));
+
+                let k = new Module.xdummy_kernel()
+                k.start()
+                let server = k.get_server()
+
+                // build a multipart message
+                multipart = new Module.multipart_t()
+                multipart.addstr(JSON.stringify({
+                  x: 5, 
+                  y: 6 
+                }))
+                console.log("send shell", multipart.str())
+                server.send_shell(multipart) 
+                multipart.delete()
+
+
+                multipart = new Module.multipart_t("the message part 1")
+                console.log("send control", multipart.str())
+                // server.send_control(multipart)
+              }
+            };
+
+            // var Module = {
+            //     print: (function() {
+            //         var element = document.getElementById('output');
+            //         return function(text) {
+            //             element.innerHTML += text + "<br>";
+            //         };
+            //     })(),
+            //     websocket : {
+            //         url: 'ws://localhost:8089/',
+            //         subprotocol : "text"
+            //     },
+            //     printErr: function(text) {
+            //             if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+            //             if (0) {
+            //                 dump(text + '\n');
+            //             }
+            //     },              
+            //     canvas: (function() {
+            //         var canvas = document.getElementById('canvas');
+            //         return canvas;
+            //     })()
+            // };
+        </script>
+        <script src="fobar.js"></script>
+    </body>
+</html>
