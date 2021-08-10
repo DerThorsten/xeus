@@ -1,5 +1,13 @@
 FROM emscripten/emsdk:2.0.26
 
+
+ARG USER_ID
+ARG GROUP_ID
+
+# RUN addgroup --gid $GROUP_ID user
+# RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID user
+# USER user
+
 # # RUN apt-get update && \
 # #     apt-get install -qqy doxygen git && \
 # #     mkdir -p /opt/libvpx/build && \
@@ -28,7 +36,7 @@ RUN cd /opt/openssl/build && \
     emmake make -j8
 
 RUN cd /opt/openssl/build && \
-    ls && emmake make install_sw 
+    emmake make install_sw
 
 
 ##################################################################
@@ -57,14 +65,21 @@ RUN cd /opt/nlohmannjson/build && \
     emmake make -j8 install
 
 
+##################################################################
+# xeus itself
+##################################################################
 
-ADD . .
 
+RUN mkdir -p /xeussrc
+
+COPY . /xeussrc
+
+RUN cd /xeussrc && ls
 
 RUN cd /install/lib && echo "LS" && ls
 RUN cd /install/include && echo "LS" && ls
-RUN mkdir -p bld && cd bld  && ls &&\
-    emcmake cmake ..  \
+RUN mkdir -p /embuild && cd /embuild  && ls &&\
+    emcmake cmake  /xeussrc \
         -DCMAKE_INSTALL_PREFIX=/install \
         -Dnlohmann_json_DIR=/install/lib/cmake/nlohmann_json \
         -Dxtl_DIR=/install/share/cmake/xtl \
@@ -73,5 +88,9 @@ RUN mkdir -p bld && cd bld  && ls &&\
         -DOPENSSL_SSL_LIBRARY=/install/libx32/libssl.a \
         -DOPENSSL_ROOT_DIR=/install/ \
         -DOPENSSL_USE_STATIC_LIBS=ON
-RUN cd bld && \
+RUN cd /embuild && \
     emmake make -j8 fobar
+
+RUN cd /embuild && ls && pwd
+RUN cd /embuild/test_wasm && ls && pwd
+RUN cp /embuild/test_wasm/fobar.js .
