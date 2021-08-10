@@ -90,7 +90,3 @@ RUN mkdir -p /embuild && cd /embuild  && ls &&\
         -DOPENSSL_USE_STATIC_LIBS=ON
 RUN cd /embuild && \
     emmake make -j8 fobar
-
-RUN cd /embuild && ls && pwd
-RUN cd /embuild/test_wasm && ls && pwd
-RUN cp /embuild/test_wasm/fobar.js .
