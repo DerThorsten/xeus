@@ -89,4 +89,4 @@ RUN mkdir -p /embuild && cd /embuild  && ls &&\
         -DOPENSSL_ROOT_DIR=/install/ \
         -DOPENSSL_USE_STATIC_LIBS=ON
 RUN cd /embuild && \
-    emmake make -j8 fobar
+    emmake make -j8 xeus_dummy
