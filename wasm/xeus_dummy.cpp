@@ -140,12 +140,15 @@ xeus::xserver * get_server(xeus::xkernel * kernel){
 
 
 
-
 EMSCRIPTEN_BINDINGS(my_module) {
+
+    function("lerp", &lerp);
 
     class_<zmq::message_t>("message_t")
         .constructor<>()
     ;
+
+    register_vector<zmq::message_t>("message_vector_t");
 
     class_<zmq::multipart_t>("multipart_t")
         .constructor<>()
@@ -155,27 +158,77 @@ EMSCRIPTEN_BINDINGS(my_module) {
         .function("str", &zmq::multipart_t::str)
     ;
 
-    using server_type = xeus::xserver;
-    using server_emscripten_type = xeus::xserver_emscripten;
 
-    class_<server_type>("xserver")
-        .function("stop",&server_type::stop)
-         .function("send_shell",    &server_type::send_shell)
-         .function("send_control",  &server_type::send_control)
-         .function("send_stdin",    &server_type::send_stdin)
+
+    class_<nl::json>("nl_json")
     ;
 
 
+    using interpreter_base_type = xeus::xinterpreter;
+    using interpreter_type =    test_kernel::test_interpreter;
 
 
-    class_<server_emscripten_type, base<server_type>>("xserver_emscripten")
+    class_<interpreter_base_type>("xinterpreter")
+        .function
+        <
+        std::string(
+            interpreter_base_type &,
+            std::string ,
+            bool ,
+            bool ,
+            std::string,
+            bool 
+        )>
+        ("execute_request",[](
+            interpreter_base_type & self,
+            const std::string& code,
+            bool silent,
+            bool store_history,
+            std::string user_expressions_json_str,
+            bool allow_stdin
+        )->std::string{
+            auto user_expressions = nl::json::parse(user_expressions_json_str);
+            return self.execute_request(code, silent, store_history, user_expressions, allow_stdin).dump();
+        })
+
+        .function<void( interpreter_base_type &,emscripten::val)>("register_publisher", [](
+            interpreter_base_type & self, emscripten::val val
+        ){
+            // wrap in an object
+            std::function<void(const std::string&, nl::json, nl::json, xeus::buffer_sequence)>
+            publisher([val](const std::string& a, nl::json b, nl::json c, xeus::buffer_sequence buffer_sequence){
+                std::cout<<"size of buffer_sequence "<<buffer_sequence.size()<<"\n";
+                val(a, b.dump(), c.dump(), buffer_sequence);
+            });
+            self.register_publisher(publisher);
+        })
     ;
 
-
-    class_<xeus::xkernel>("xdummy_kernel")
-        .constructor(&make_xkernel, allow_raw_pointers())
-        .function("start", &xeus::xkernel::start)
-        .function("get_server", &get_server,allow_raw_pointers())
-        //.function("get_server", &xeus::xkernel::get_server)
+    class_<interpreter_type, base<interpreter_base_type>>("test_interpreter")
+         .constructor<>()
     ;
+
+    // using server_type = xeus::xserver;
+    // using server_emscripten_type = xeus::xserver_emscripten;
+
+    // class_<server_type>("xserver")
+    //     .function("stop",&server_type::stop)
+    //      .function("send_shell",    &server_type::send_shell)
+    //      .function("send_control",  &server_type::send_control)
+    //      .function("send_stdin",    &server_type::send_stdin)
+    // ;
+
+
+
+
+    // class_<server_emscripten_type, base<server_type>>("xserver_emscripten")
+    // ;
+
+
+    // class_<xeus::xkernel>("xdummy_kernel")
+    //     .constructor(&make_xkernel, allow_raw_pointers())
+    //     .function("start", &xeus::xkernel::start)
+    //     .function("get_server", &get_server,allow_raw_pointers())
+    //     //.function("get_server", &xeus::xkernel::get_server)
+    // ;
 }
