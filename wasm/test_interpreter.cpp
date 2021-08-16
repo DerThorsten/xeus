@@ -39,18 +39,17 @@ namespace test_kernel
 
         if (code.compare("hello, world") == 0)
         {
-            publish_stream("stdout", code);
+            publish_stream("stdout", std::string("hello from c++"));
         }
 
         if (code.compare("error") == 0)
         {
-            publish_stream("stderr", code);
+            publish_stream("stderr", std::string("error from c++"));
         }
 
         if (code.compare("?") == 0)
         {
-            std::string html_content = R"(<iframe class="xpyt-iframe-pager" src="
-                https://xeus.readthedocs.io"></iframe>)";
+            std::string html_content = R"(<iframe class="xpyt-iframe-pager" src="https://xeus.readthedocs.io"></iframe>)";
 
             kernel_res["status"] = "ok";
             kernel_res["payload"] = nl::json::array();
