@@ -1,8 +1,4 @@
-#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
-#include "zmq_addon.hpp"
-#else
-#include "wasm/zmq.hpp"
-#endif
+#include "xeus/xwrap_zmq_addon.hpp"
 
 #include "nlohmann/json.hpp"
 #include "xeus/xmessage.hpp"

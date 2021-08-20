@@ -13,12 +13,8 @@
 #include <functional>
 #include <memory>
 
-#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
-#include "zmq.hpp"
-#include "zmq_addon.hpp"
-#else
-#include "wasm/zmq.hpp"
-#endif
+#include "xwrap_zmq.hpp"
+#include "xwrap_zmq_addon.hpp"
 
 #include "xeus.hpp"
 #include "xkernel_configuration.hpp"

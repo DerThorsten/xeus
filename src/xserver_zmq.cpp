@@ -13,11 +13,7 @@
 #include "xeus/xserver_zmq.hpp"
 #include "xeus/xguid.hpp"
 #include "xeus/xmiddleware.hpp"
-#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
-#include "zmq_addon.hpp"
-#else
-#include "wasm/zmq.hpp"
-#endif
+#include "xeus/xwrap_zmq_addon.hpp"
 #include "xpublisher.hpp"
 #include "xheartbeat.hpp"
 #include "xtrivial_messenger.hpp"

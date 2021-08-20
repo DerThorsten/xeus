@@ -13,11 +13,7 @@
 #include <memory>
 #include <string>
 
-#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
-#include "zmq.hpp"
-#else
-#include "wasm/zmq.hpp"
-#endif
+#include "xwrap_zmq.hpp"
 
 #include "xeus.hpp"
 

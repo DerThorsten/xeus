@@ -14,11 +14,7 @@
 #include "xeus/xserver_zmq_split.hpp"
 #include "xeus/xguid.hpp"
 #include "xeus/xmiddleware.hpp"
-#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
-#include "zmq_addon.hpp"
-#else
-#include "wasm/zmq.hpp"
-#endif
+#include "xeus/xwrap_zmq.hpp"
 #include "xcontrol.hpp"
 #include "xheartbeat.hpp"
 #include "xpublisher.hpp"

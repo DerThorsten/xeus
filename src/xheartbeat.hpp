@@ -12,12 +12,7 @@
 
 #include <string>
 
-#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
-#include "zmq.hpp"
-#else
-#include "xeus/wasm/zmq.hpp"
-#endif
-
+#include "xeus/xwrap_zmq.hpp"
 
 namespace xeus
 {

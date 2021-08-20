@@ -10,11 +10,7 @@
 #include <iterator>
 #include <string>
 
-#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
-#include "zmq_addon.hpp"
-#else
-#include "xeus/wasm/zmq.hpp"
-#endif
+#include "xeus/xwrap_zmq_addon.hpp"
 #include "xeus/xmiddleware.hpp"
 #include "xheartbeat.hpp"
 

@@ -14,11 +14,7 @@
 #include "xeus/xserver_control_main.hpp"
 #include "xeus/xguid.hpp"
 #include "xeus/xmiddleware.hpp"
-#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
-#include "zmq_addon.hpp"
-#else
-#include "xeus/wasm/zmq.hpp"
-#endif
+#include "xeus/xwrap_zmq_addon.hpp"
 #include "xcontrol.hpp"
 
 namespace xeus

@@ -19,11 +19,7 @@
 #include <string>
 #include <vector>
 
-#ifndef EMSCRIPTEN_ZMQ_REPLACEMENT
-#include "zmq.hpp"
-#else
-#include "wasm/zmq.hpp"
-#endif
+#include "xwrap_zmq.hpp"
 #include "nlohmann/json.hpp"
 
 #include "xdebugger.hpp"

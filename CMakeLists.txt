@@ -206,6 +206,11 @@ set(XEUS_HEADERS
     # ${XEUS_INCLUDE_DIR}/xeus/xserver_zmq.hpp
     # ${XEUS_INCLUDE_DIR}/xeus/xserver_zmq_split.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xsystem.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xwrap_zmq.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xwrap_zmq_addon.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xemscripten_zmq.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xembind.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xems_interpreter.hpp
 )
 
 set(XEUS_SOURCES
@@ -251,6 +256,7 @@ set(XEUS_SOURCES
     ${XEUS_SOURCE_DIR}/xtrivial_messenger.cpp
     # ${XEUS_SOURCE_DIR}/xzmq_messenger.hpp
     # ${XEUS_SOURCE_DIR}/xzmq_messenger.cpp
+
 )
 
 if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Emscripten")
@@ -382,36 +388,36 @@ macro(xeus_create_target target_name linkage output_name)
                 endif ()
             endif ()
         endif ()
-    endif ()
-
+    endif()
     if (UNIX)
         # CMake does not compute the version number of so files as libtool
         # does on Linux. Strictly speaking, we should exclude FreeBSD and
         # Apple from this, but that would require having different version
         # numbers depending on the platform. We prefer to follow the
         # libtool pattern everywhere.
-        # math(EXPR XEUS_BINARY_COMPATIBLE "${XEUS_BINARY_CURRENT} - ${XEUS_BINARY_AGE}")
-        # set_target_properties(
-        #     ${target_name}
-        #     PROPERTIES
-        #     PUBLIC_HEADER "${XEUS_HEADERS}"
-        #     COMPILE_DEFINITIONS "XEUS_EXPORTS"
-        #     PREFIX ""
-        #     VERSION "${XEUS_BINARY_COMPATIBLE}.${XEUS_BINARY_REVISION}.${XEUS_BINARY_AGE}"
-        #     SOVERSION ${XEUS_BINARY_COMPATIBLE}
-        #     OUTPUT_NAME "lib${output_name}"
-        # )
+        math(EXPR XEUS_BINARY_COMPATIBLE "${XEUS_BINARY_CURRENT} - ${XEUS_BINARY_AGE}")
+        set_target_properties(
+            ${target_name}
+            PROPERTIES
+            PUBLIC_HEADER "${XEUS_HEADERS}"
+            COMPILE_DEFINITIONS "XEUS_EXPORTS"
+            PREFIX ""
+            VERSION "${XEUS_BINARY_COMPATIBLE}.${XEUS_BINARY_REVISION}.${XEUS_BINARY_AGE}"
+            SOVERSION ${XEUS_BINARY_COMPATIBLE}
+            OUTPUT_NAME "lib${output_name}"
+        )
     else()
-        # set_target_properties(
-        #     ${target_name}
-        #     PROPERTIES
-        #     PUBLIC_HEADER "${XEUS_HEADERS}"
-        #     COMPILE_DEFINITIONS "XEUS_EXPORTS"
-        #     PREFIX ""
-        #     VERSION ${XEUS_BINARY_VERSION}
-        #     SOVERSION ${XEUS_BINARY_CURRENT}
-        #     OUTPUT_NAME "lib${output_name}"
-        # )
+        message(STATUS ${target_name})
+        set_target_properties(
+            ${target_name}
+            PROPERTIES
+            PUBLIC_HEADER "${XEUS_HEADERS}"
+            COMPILE_DEFINITIONS "XEUS_EXPORTS"
+            PREFIX ""
+            VERSION ${XEUS_BINARY_VERSION}
+            SOVERSION ${XEUS_BINARY_CURRENT}
+            OUTPUT_NAME "lib${output_name}"
+        )
     endif()
 
     # Compilation flags
