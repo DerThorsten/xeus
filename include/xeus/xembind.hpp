@@ -81,7 +81,6 @@ namespace xeus
 
                 auto user_expressions = nl::json::parse(user_expressions_json_str);
                 auto dumped =  self.execute_request(code, silent, store_history, user_expressions, allow_stdin).dump();
-                std::cout<<"dumped "<<dumped<<"\n";
                 return dumped;
             })
             ////////////////////////////////////////////////////////////////////////////////////
@@ -105,7 +104,7 @@ namespace xeus
                 // wrap in an object
                 std::function<void(const std::string&, nl::json, nl::json, xeus::buffer_sequence)>
                 publisher([val](const std::string& a, nl::json b, nl::json c, xeus::buffer_sequence buffer_sequence){
-                    std::cout<<"size of buffer_sequence "<<buffer_sequence.size()<<"\n";
+                    //std::cout<<"size of buffer_sequence "<<buffer_sequence.size()<<"\n";
                     val(a, b.dump(), c.dump(), buffer_sequence);
                 });
                 self.register_publisher(publisher);

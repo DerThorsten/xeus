@@ -23,7 +23,6 @@ namespace xeus
     xinterpreter::xinterpreter()
         : m_execution_count(0)
     {
-        std::cout<<"constucted\n";
     }
 
     void xinterpreter::configure()
