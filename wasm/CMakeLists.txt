@@ -50,3 +50,9 @@ set(xeus_TARGET xeus-static)
 add_executable(xeus_dummy xeus_dummy.cpp
     test_interpreter.cpp)
 target_link_libraries(xeus_dummy PRIVATE ${xeus_TARGET})
+
+
+
+add_executable(xeus_dummy_kernel xeus_dummy_kernel.cpp
+    test_interpreter.cpp)
+target_link_libraries(xeus_dummy_kernel PRIVATE ${xeus_TARGET})

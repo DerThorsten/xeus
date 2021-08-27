@@ -10,6 +10,8 @@
 
 #include "xeus/xems_interpreter.hpp"
 #include "xeus/xserver_emscripten.hpp"
+#include "xeus/xkernel.hpp"
+
 #include "xeus/xinterpreter.hpp"
 #include "xwrap_zmq.hpp"
 #include "xwrap_zmq_addon.hpp"
@@ -27,14 +29,18 @@ namespace xeus
     void export_server_emscripten()
     {
         using namespace emscripten;
-        class_<xserver_emscripten>("xserver_emscripten")
+
+        class_<xserver>("xserver")
+        ;
+
+        class_<xserver_emscripten,  base<xserver> >("xserver_emscripten")
             // .function("send_shell_json_str", &xserver_emscripten::send_shell_json_str)
             // .function("send_control_json_str", &xserver_emscripten::send_control_json_str)
             // .function("send_stdin_json_str", &xserver_emscripten::send_stdin_json_str)
 
-            .function("notify_shell_listener" ,     &xserver_emscripten::notify_shell_listener)
-            .function("notify_control_listener" ,   &xserver_emscripten::notify_control_listener)
-            .function("notify_stdin_listener" ,     &xserver_emscripten::notify_stdin_listener)
+            .function("notify_shell_listener" ,     &xserver_emscripten::js_notify_shell_listener)
+            .function("notify_control_listener" ,   &xserver_emscripten::js_notify_control_listener)
+            .function("notify_stdin_listener" ,     &xserver_emscripten::js_notify_stdin_listener)
             .function("register_js_callback" ,     &xserver_emscripten::register_js_callback)
             // .template function<void( xserver_emscripten&,emscripten::val)>("register_js_callback", [](
             //     xserver_emscripten& self, emscripten::val val
@@ -86,30 +92,32 @@ namespace xeus
 
 
     template<class interpreter_type>
+    xkernel * make_xkernel()
+    {
+        xeus::xconfiguration config;
+
+        using history_manager_ptr = std::unique_ptr<xeus::xhistory_manager>;
+        history_manager_ptr hist = xeus::make_in_memory_history_manager();
+
+        using interpreter_ptr = std::unique_ptr<interpreter_type>;
+        auto interpreter = interpreter_ptr(new interpreter_type());
+
+        xeus::xkernel * kernel = new xeus::xkernel(config,
+                             xeus::get_user_name(),
+                             std::move(interpreter),
+                             std::move(hist),
+                             nullptr,
+                             xeus::make_xserver_emscripten);
+        return kernel;
+    }
+
+    template<class interpreter_type>
     void export_kernel(const std::string kernel_name)
     {
         using namespace emscripten;
         class_<xkernel>(kernel_name.c_str())
-            .constructor<>([](){
-    
-                xeus::xconfiguration config;
-
-                using history_manager_ptr = std::unique_ptr<xeus::xhistory_manager>;
-                history_manager_ptr hist = xeus::make_in_memory_history_manager();
-
-                using interpreter_ptr = std::unique_ptr<interpreter_type>;
-                auto interpreter = interpreter_ptr(new interpreter_type());
-
-                xeus::xkernel * kernel = new xeus::xkernel(config,
-                                     xeus::get_user_name(),
-                                     std::move(interpreter),
-                                     std::move(hist),
-                                     nullptr,
-                                     xeus::make_xserver_emscripten);
-                return kernel;
-
-            }, allow_raw_pointers())
-            .function("get_server", &xkernel::get_server, allow_raw_pointers())
+            .constructor<>(&make_xkernel<interpreter_type>, allow_raw_pointers())
+            .function("get_server", &get_server, allow_raw_pointers())
         ;
     }
 
