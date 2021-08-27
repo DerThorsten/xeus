@@ -26,6 +26,10 @@ namespace xeus
 {
     using buffer_sequence = std::vector<zmq::message_t>;
 
+
+    void parse_zmq_message(const zmq::message_t& msg, nl::json& json);
+    zmq::message_t write_zmq_message(const nl::json& json, nl::json::error_handler_t error_handler);
+
     class XEUS_API xmessage_base
     {
     public:

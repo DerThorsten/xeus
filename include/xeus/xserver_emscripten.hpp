@@ -5,8 +5,7 @@
 #include "xeus/xserver.hpp"
 #include "xeus/xkernel_configuration.hpp"
 
-#include <emscripten/websocket.h>
-#include <emscripten.h>
+#include <emscripten/bind.h>
 
 namespace xeus
 {
@@ -31,16 +30,28 @@ namespace xeus
     {
     public:
 
+        // using js_publisher_type = std::function<void(const std::string&, nl::json, nl::json, buffer_sequence)>;
+ 
 
         xserver_emscripten(const xconfiguration& config);
 
-        ~xserver_emscripten() = default;
+        ~xserver_emscripten();
 
-        using xserver::notify_internal_listener;
 
         void loop_func();
 
+        // needs to be public for embind
+        using xserver::notify_shell_listener;
+        using xserver::notify_control_listener;
+        using xserver::notify_stdin_listener;
+        using xserver::notify_internal_listener;
 
+
+        // void send_shell_json_str(const std::string & message);
+        // void send_control_json_str(const std::string & message);
+        // void send_stdin_json_str(const std::string & message);
+
+        void register_js_callback(emscripten::val callback);
     protected:
 
         xcontrol_messenger& get_control_messenger_impl() override;
@@ -49,6 +60,10 @@ namespace xeus
         void send_control_impl(zmq::multipart_t& message) override;
         void send_stdin_impl(zmq::multipart_t& message) override;
         void publish_impl(zmq::multipart_t& message, channel c) override;
+
+
+
+        void send_to_js(const std::string type, zmq::multipart_t& message, channel c = channel::SHELL);
 
         void start_impl(zmq::multipart_t& message) override;
         void abort_queue_impl(const listener& l, long polling_interval) override;
@@ -60,6 +75,7 @@ namespace xeus
         using trivial_messenger_ptr = std::unique_ptr<xtrivial_emscripten_messenger>;
         trivial_messenger_ptr p_messenger;
 
+        emscripten::val * p_js_callback;
     };
 
 

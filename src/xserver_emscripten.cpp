@@ -1,17 +1,26 @@
 
 #include "xeus/xeus.hpp"
 #include "xeus/xserver.hpp"
+#include "xeus/xmessage.hpp"
 #include "xeus/xkernel_configuration.hpp"
 #include "xeus/xserver_emscripten.hpp"
 
 #include <iostream>
 
-#include <emscripten/websocket.h>
 #include <emscripten.h>
 
 
 namespace xeus
 {
+
+
+
+    void json_str_to_multipart(const std::string & json_str_wire_msg, zmq::multipart_t& wire_msg)
+    {
+        auto json_write_msg = nl::json::parse(json_str_wire_msg);
+        // todo
+
+    }
 
 
     xtrivial_emscripten_messenger::xtrivial_emscripten_messenger(xserver_emscripten* server)
@@ -21,7 +30,6 @@ namespace xeus
     }
     xtrivial_emscripten_messenger::~xtrivial_emscripten_messenger()
     {
-
     }
     nl::json xtrivial_emscripten_messenger::send_to_shell_impl(const nl::json& message)
     {
@@ -30,11 +38,72 @@ namespace xeus
         return nl::json::parse(wire_rep.popstr());
     }
 
-   xserver_emscripten::xserver_emscripten(const xconfiguration& config)
-   : p_messenger(new xtrivial_emscripten_messenger(this))
-   {
+    xserver_emscripten::xserver_emscripten(const xconfiguration& config)
+    :    p_messenger(new xtrivial_emscripten_messenger(this)),
+    p_js_callback(nullptr)
+    {
 
-   }
+    }
+
+    xserver_emscripten::~xserver_emscripten()
+    {
+        if(p_js_callback!=nullptr)
+        {
+            delete p_js_callback;
+        }
+    }
+
+
+    void xserver_emscripten::send_to_js(const std::string type, zmq::multipart_t& wire_msg, channel c)
+    {
+        if(p_js_callback)
+        {
+            // this is mostly a  reimpl of what is in xmessage but
+            // witthout the auth part
+
+            zmq::message_t zmq_signature = wire_msg.pop();
+            zmq::message_t zmq_header = wire_msg.pop();
+            zmq::message_t zmq_parent_header = wire_msg.pop();
+            zmq::message_t zmq_metadata = wire_msg.pop();
+            zmq::message_t zmq_content = wire_msg.pop();
+
+
+            auto buffers = nl::json::array();
+            nl::json json_header, json_parent_header, json_metadata, json_content;
+
+            parse_zmq_message(zmq_header,           json_header);
+            parse_zmq_message(zmq_parent_header,    json_parent_header);
+            parse_zmq_message(zmq_metadata,         json_metadata);
+            parse_zmq_message(zmq_content,          json_content);
+
+            while (!wire_msg.empty())
+            {
+                zmq::message_t zmq_buffer = wire_msg.pop();
+                nl::json json_buffer;
+                parse_zmq_message(zmq_buffer, json_buffer);
+                buffers.push_back(json_buffer);
+            }
+
+            // build overall json object
+            nl::json j;
+            
+            // the actual msg
+            j["header"] = json_header;
+            j["parent_header"] = json_parent_header;
+            j["metadata"] = json_metadata;
+            j["content"] = json_content;
+            j["buffers"] = buffers;
+
+            // the callback
+            (*p_js_callback)(type, int(c), j.dump());
+
+        }
+    }
+
+
+
+
+
 
 
     xcontrol_messenger& xserver_emscripten::get_control_messenger_impl() 
@@ -45,28 +114,39 @@ namespace xeus
     void xserver_emscripten::send_shell_impl(zmq::multipart_t& message) 
     {
         std::cout<<"send_shell_impl\n";
-        this->notify_shell_listener(message);
+        this->send_to_js("shell", message); 
     }
 
     void xserver_emscripten::send_control_impl(zmq::multipart_t& message) 
     {
         std::cout<<"send_control_impl\n";
-        this->notify_control_listener(message);
+        this->send_to_js("control", message);        
     }
 
     void xserver_emscripten::send_stdin_impl(zmq::multipart_t& message) 
     {
         std::cout<<"send_stdin_impl\n";
-        this->notify_stdin_listener(message);
+        this->send_to_js("sdtin", message);        
     }
 
     void xserver_emscripten::publish_impl(zmq::multipart_t& message, channel c) 
     {
         std::cout<<"publish_impl\n";
+        this->send_to_js("publish", message, c);        
     }
 
 
-
+    void xserver_emscripten::register_js_callback(emscripten::val callback)
+    {
+        if(p_js_callback == nullptr)
+        {
+            p_js_callback = new emscripten::val(callback);
+        }
+        else
+        {
+            throw std::runtime_error("callback is already registerd");
+        }
+    }
 
     void RenderLoopCallback(void* arg)
     {
