@@ -79,11 +79,37 @@ namespace xeus
     }
 
 
+
+    xeus::xserver * get_server(xeus::xkernel * kernel){
+        return &kernel->get_server();
+    }
+
+
     template<class interpreter_type>
     void export_kernel(const std::string kernel_name)
     {
         using namespace emscripten;
-        class_<xkernel>(kernel_name.c_str());
+        class_<xkernel>(kernel_name.c_str())
+            .constructor<>([](){
+    
+                xeus::xconfiguration config;
+
+                using history_manager_ptr = std::unique_ptr<xeus::xhistory_manager>;
+                history_manager_ptr hist = xeus::make_in_memory_history_manager();
+
+                using interpreter_ptr = std::unique_ptr<interpreter_type>;
+                auto interpreter = interpreter_ptr(new interpreter_type());
+
+                xeus::xkernel * kernel = new xeus::xkernel(config,
+                                     xeus::get_user_name(),
+                                     std::move(interpreter),
+                                     std::move(hist),
+                                     nullptr,
+                                     xeus::make_xserver_emscripten);
+                return kernel;
+
+            }, allow_raw_pointers())
+            .function("get_server", &xkernel::get_server, allow_raw_pointers())
         ;
     }
 

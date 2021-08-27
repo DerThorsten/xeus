@@ -17,9 +17,33 @@ namespace xeus
 
     void json_str_to_multipart(const std::string & json_str_wire_msg, zmq::multipart_t& wire_msg)
     {
-        auto json_write_msg = nl::json::parse(json_str_wire_msg);
-        // todo
+        auto json_wire_msg = nl::json::parse(json_str_wire_msg);
 
+        nl::json json_header, json_parent_header, json_metadata, json_content;
+
+        // to make it save
+        json_header = json_wire_msg["header"];
+        json_parent_header = json_wire_msg["parent_header"];
+        json_metadata = json_wire_msg["metadata"];
+        json_content = json_wire_msg["content"];
+
+
+        // to take error handler of xkernel
+        nl::json::error_handler_t error_handler = nl::json::error_handler_t::strict;
+
+        zmq::message_t header = write_zmq_message(json_header, error_handler);
+        zmq::message_t parent_header = write_zmq_message(json_parent_header, error_handler);
+        zmq::message_t metadata = write_zmq_message(json_metadata, error_handler);
+        zmq::message_t content = write_zmq_message(json_content, error_handler);
+        zmq::message_t signature;
+
+        wire_msg.add(std::move(signature));
+        wire_msg.add(std::move(header));
+        wire_msg.add(std::move(parent_header));
+        wire_msg.add(std::move(metadata));
+        wire_msg.add(std::move(content));
+
+        // todo handler buffers
     }
 
 
@@ -101,7 +125,24 @@ namespace xeus
     }
 
 
-
+    void xserver_emscripten::js_notify_shell_listener(const std::string & json_str)
+    {
+        zmq::multipart_t message;
+        json_str_to_multipart(json_str, message);
+        this->notify_shell_listener(message);                
+    }
+    void xserver_emscripten::js_notify_control_listener(const std::string & json_str)
+    {
+        zmq::multipart_t message;
+        json_str_to_multipart(json_str, message);
+        this->notify_control_listener(message);        
+    }
+    void xserver_emscripten::js_notify_stdin_listener(const std::string & json_str)
+    {
+        zmq::multipart_t message;
+        json_str_to_multipart(json_str, message);
+        this->notify_stdin_listener(message);        
+    }
 
 
 

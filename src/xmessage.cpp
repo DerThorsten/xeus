@@ -79,10 +79,12 @@ namespace xeus
         }
 
         // TODO: should we verify with buffers
+        #ifndef __EMSCRIPTEN__
         if (!auth.verify(signature, header, parent_header, metadata, content))
         {
             throw std::runtime_error("Signatures don't match");
         }
+        #endif
     }
 
     void xmessage_base::serialize(zmq::multipart_t& wire_msg,
@@ -96,8 +98,11 @@ namespace xeus
         zmq::message_t parent_header = write_zmq_message(m_parent_header, error_handler);
         zmq::message_t metadata = write_zmq_message(m_metadata, error_handler);
         zmq::message_t content = write_zmq_message(m_content, error_handler);
+        #ifndef __EMSCRIPTEN__
         zmq::message_t signature = auth.sign(header, parent_header, metadata, content);
-
+        #else
+        zmq::message_t signature;
+        #endif
         wire_msg.add(std::move(signature));
         wire_msg.add(std::move(header));
         wire_msg.add(std::move(parent_header));
