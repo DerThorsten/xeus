@@ -118,6 +118,7 @@ namespace xeus
         class_<xkernel>(kernel_name.c_str())
             .constructor<>(&make_xkernel<interpreter_type>, allow_raw_pointers())
             .function("get_server", &get_server, allow_raw_pointers())
+            .function("start", &xkernel::start)
         ;
     }
 

@@ -14,6 +14,19 @@ namespace xeus
 {
 
 
+    bool is_delimiter(zmq::message_t& frame) 
+    {
+        std::size_t frame_size = frame.size();
+        if (frame_size != xmessage_base::DELIMITER.size())
+        {
+            return false;
+        }
+
+        std::string check(frame.data<const char>(), frame_size);
+        return check == xmessage_base::DELIMITER;
+    }
+
+
 
     void json_str_to_multipart(const std::string & json_str_wire_msg, zmq::multipart_t& wire_msg)
     {
@@ -21,7 +34,7 @@ namespace xeus
 
         nl::json json_header, json_parent_header, json_metadata, json_content;
 
-        // to make it save
+        // todo: make it save
         json_header = json_wire_msg["header"];
         json_parent_header = json_wire_msg["parent_header"];
         json_metadata = json_wire_msg["metadata"];
@@ -37,6 +50,7 @@ namespace xeus
         zmq::message_t content = write_zmq_message(json_content, error_handler);
         zmq::message_t signature;
 
+        wire_msg.addstr("<IDS|MSG>");
         wire_msg.add(std::move(signature));
         wire_msg.add(std::move(header));
         wire_msg.add(std::move(parent_header));
@@ -85,16 +99,21 @@ namespace xeus
             // this is mostly a  reimpl of what is in xmessage but
             // witthout the auth part
 
+            zmq::message_t frame = wire_msg.pop();
+            while (!is_delimiter(frame) && wire_msg.size() != 0)
+            {
+                frame = wire_msg.pop();
+            }
+
+
             zmq::message_t zmq_signature = wire_msg.pop();
             zmq::message_t zmq_header = wire_msg.pop();
             zmq::message_t zmq_parent_header = wire_msg.pop();
             zmq::message_t zmq_metadata = wire_msg.pop();
             zmq::message_t zmq_content = wire_msg.pop();
 
-
             auto buffers = nl::json::array();
             nl::json json_header, json_parent_header, json_metadata, json_content;
-
             parse_zmq_message(zmq_header,           json_header);
             parse_zmq_message(zmq_parent_header,    json_parent_header);
             parse_zmq_message(zmq_metadata,         json_metadata);
@@ -119,8 +138,11 @@ namespace xeus
             j["buffers"] = buffers;
 
             // the callback
+            //std::cout<<"call the callback\n";
             (*p_js_callback)(type, int(c), j.dump());
-
+        }
+        else{
+            throw std::runtime_error("callback is null..\n");
         }
     }
 
@@ -154,25 +176,21 @@ namespace xeus
 
     void xserver_emscripten::send_shell_impl(zmq::multipart_t& message) 
     {
-        std::cout<<"send_shell_impl\n";
         this->send_to_js("shell", message); 
     }
 
     void xserver_emscripten::send_control_impl(zmq::multipart_t& message) 
     {
-        std::cout<<"send_control_impl\n";
         this->send_to_js("control", message);        
     }
 
     void xserver_emscripten::send_stdin_impl(zmq::multipart_t& message) 
     {
-        std::cout<<"send_stdin_impl\n";
         this->send_to_js("sdtin", message);        
     }
 
     void xserver_emscripten::publish_impl(zmq::multipart_t& message, channel c) 
     {
-        std::cout<<"publish_impl\n";
         this->send_to_js("publish", message, c);        
     }
 
@@ -180,11 +198,12 @@ namespace xeus
     void xserver_emscripten::register_js_callback(emscripten::val callback)
     {
         if(p_js_callback == nullptr)
-        {
-            p_js_callback = new emscripten::val(callback);
+        {   
+            p_js_callback = new emscripten::val(std::move(callback));
         }
         else
         {
+            std::cout<<"callback is already registerd\n";
             throw std::runtime_error("callback is already registerd");
         }
     }
@@ -202,27 +221,7 @@ namespace xeus
 
     void xserver_emscripten::start_impl(zmq::multipart_t& message) 
     {
-        std::cout<<"start_impl\n";
-
-
-        // this->register_shell_listener(listener([](zmq::multipart_t & message)->void{
-        //     std::cout<<"hello from shell_listener \n";
-        // }));
-        // this->register_control_listener(listener([](zmq::multipart_t & message)->void{
-        //     std::cout<<"hello from control_listener \n";
-        // }));
-        // this->register_stdin_listener(listener([](zmq::multipart_t & message)->void{
-        //     std::cout<<"hello from stdin_listener \n";
-        // }));
-        // this->register_internal_listener(internal_listener([](zmq::multipart_t & message)->void{
-        //     std::cout<<"internal_listener \n";
-        // }));
-
-
-       
-
-        std::cout<<"the message is "<<message.str()<<"\n";
-        // emscripten_set_main_loop_arg(&RenderLoopCallback, this, -1, 1);
+      
     }
 
     void xserver_emscripten::abort_queue_impl(const listener& l, long polling_interval) 
@@ -232,12 +231,10 @@ namespace xeus
 
     void xserver_emscripten::stop_impl() 
     {
-        std::cout<<"stop_impl\n";
     }
 
     void xserver_emscripten::update_config_impl(xconfiguration& config) const 
     {
-        std::cout<<"update_config_impl\n";
     }
 
 

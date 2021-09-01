@@ -43,6 +43,8 @@ namespace xeus
         const nl::json& content() const;
         const buffer_sequence& buffers() const;
 
+        static const std::string DELIMITER;
+
     protected:
 
         xmessage_base() = default;
@@ -62,8 +64,6 @@ namespace xeus
         void serialize(zmq::multipart_t& wire_msg,
                        const xauthentication& auth,
                        nl::json::error_handler_t) &&;
-
-        static const std::string DELIMITER;
 
     private:
 

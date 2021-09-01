@@ -61,7 +61,6 @@ namespace xeus
 
     void xmessage_base::deserialize(zmq::multipart_t& wire_msg, const xauthentication& auth)
     {
-        std::cout<<"the deserialize of "<<wire_msg.str()<<"\n";
         zmq::message_t signature = wire_msg.pop();
         zmq::message_t header = wire_msg.pop();
         zmq::message_t parent_header = wire_msg.pop();
@@ -163,6 +162,7 @@ namespace xeus
         // ZMQ identites
         while (!base_type::is_delimiter(frame) && wire_msg.size() != 0)
         {
+            //std::cout<<"adding\n";
             m_zmq_id.emplace_back(frame.data<const char>(), frame.size());
             frame = wire_msg.pop();
         }
