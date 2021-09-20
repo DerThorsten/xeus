@@ -147,27 +147,27 @@ namespace xeus
     }
 
 
-    void xserver_emscripten::js_notify_shell_listener(const std::string & json_str)
+    void xserver_emscripten::js_notify_listener(const std::string & json_str, const std::string & channel)
     {
         zmq::multipart_t message;
         json_str_to_multipart(json_str, message);
-        this->notify_shell_listener(message);                
+        if(channel == std::string("shell"))
+        {   
+            this->notify_shell_listener(message);  
+        }
+        else if(channel == std::string("control"))
+        {
+            this->notify_control_listener(message);  
+        }
+        else if(channel == std::string("stdin"))
+        {
+            this->notify_stdin_listener(message);  
+        }
+        else
+        {
+            throw std::runtime_error("unknown channel");
+        }
     }
-    void xserver_emscripten::js_notify_control_listener(const std::string & json_str)
-    {
-        zmq::multipart_t message;
-        json_str_to_multipart(json_str, message);
-        this->notify_control_listener(message);        
-    }
-    void xserver_emscripten::js_notify_stdin_listener(const std::string & json_str)
-    {
-        zmq::multipart_t message;
-        json_str_to_multipart(json_str, message);
-        this->notify_stdin_listener(message);        
-    }
-
-
-
 
     xcontrol_messenger& xserver_emscripten::get_control_messenger_impl() 
     {
@@ -186,7 +186,7 @@ namespace xeus
 
     void xserver_emscripten::send_stdin_impl(zmq::multipart_t& message) 
     {
-        this->send_to_js("sdtin", message);        
+        this->send_to_js("stdin", message);        
     }
 
     void xserver_emscripten::publish_impl(zmq::multipart_t& message, channel c) 

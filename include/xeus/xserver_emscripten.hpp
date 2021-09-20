@@ -40,15 +40,12 @@ namespace xeus
 
         void loop_func();
 
-        // these are exported to embind
-        void js_notify_shell_listener(const std::string & json_str);
-        void js_notify_control_listener(const std::string & json_str);
-        void js_notify_stdin_listener(const std::string & json_str);
-
+        void js_notify_listener(const std::string & json_str, const std::string &);
+        
         // needs to be public for embind
-        using xserver::notify_shell_listener;
-        using xserver::notify_control_listener;
-        using xserver::notify_stdin_listener;
+        // using xserver::notify_shell_listener;
+        // using xserver::notify_control_listener;
+        // using xserver::notify_stdin_listener;
         using xserver::notify_internal_listener;
 
 

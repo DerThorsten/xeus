@@ -38,9 +38,10 @@ namespace xeus
             // .function("send_control_json_str", &xserver_emscripten::send_control_json_str)
             // .function("send_stdin_json_str", &xserver_emscripten::send_stdin_json_str)
 
-            .function("notify_shell_listener" ,     &xserver_emscripten::js_notify_shell_listener)
-            .function("notify_control_listener" ,   &xserver_emscripten::js_notify_control_listener)
-            .function("notify_stdin_listener" ,     &xserver_emscripten::js_notify_stdin_listener)
+            .function("notify_listener" ,     &xserver_emscripten::js_notify_listener)
+            // .function("notify_shell_listener" ,     &xserver_emscripten::js_notify_shell_listener)
+            // .function("notify_control_listener" ,   &xserver_emscripten::js_notify_control_listener)
+            // .function("notify_stdin_listener" ,     &xserver_emscripten::js_notify_stdin_listener)
             .function("register_js_callback" ,     &xserver_emscripten::register_js_callback)
             // .template function<void( xserver_emscripten&,emscripten::val)>("register_js_callback", [](
             //     xserver_emscripten& self, emscripten::val val
