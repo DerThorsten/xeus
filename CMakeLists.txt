@@ -52,6 +52,7 @@ option(XEUS_DISABLE_ARCH_NATIVE "disable -march=native flag" OFF)
 option(XEUS_BUILD_SHARED_LIBS "Build xeus shared library." ON)
 option(XEUS_BUILD_STATIC_LIBS "Build xeus static library (default if BUILD_SHARED_LIBS is OFF)." ON)
 option(XEUS_STATIC_DEPENDENCIES "link statically with xeus dependencies" OFF)
+option(XEUS_WASM "Build xeus for wasm" OFF)
 
 # Test options
 option(XEUS_BUILD_TESTS "xeus test suite" OFF)
