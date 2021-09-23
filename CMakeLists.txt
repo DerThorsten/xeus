@@ -179,6 +179,7 @@ set(XEUS_HEADERS
     ${XEUS_INCLUDE_DIR}/xeus/xmiddleware.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver_control_main.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xserver_emscripten.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver_shell_main.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver_zmq.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver_zmq_split.hpp
@@ -215,6 +216,7 @@ set(XEUS_SOURCES_ZMQ_SERVER
 
 # sources only related to the emscripten wasm server
 set(XEUS_SOURCES_EMSCRIPTEN_WASM_SERVER
+    ${XEUS_SOURCE_DIR}/xserver_emscripten.cpp
 )
 
 set(XEUS_SOURCES

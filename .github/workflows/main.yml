@@ -202,4 +202,4 @@ jobs:
             -Dnlohmann_json_DIR=/custom_sysroot/lib/cmake/nlohmann_json \
             -DCMAKE_PREFIX_PATH=/custom_sysroot
           emmake make -j2
-
+          emmake make -j2 install
