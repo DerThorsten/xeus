@@ -81,6 +81,29 @@ if(XEUS_EMSCRIPTEN_WASM_BUILD)
     SET(XEUS_BUILD_SHARED_LIBS OFF)
     SET(XEUS_BUILD_STATIC_LIBS ON)
     add_compile_definitions(XEUS_EMSCRIPTEN_WASM_BUILD)
+
+
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} --bind")
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -Wno-deprecated -Wno-unused-command-line-argument")
+    #set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -lwebsocket.js")
+    # module / import 
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s MODULARIZE=1 -s EXPORT_NAME=\"createXeusModule\" -s EXPORT_ES6=0 -s USE_ES6_IMPORT_META=0")
+    # safty
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES}  -s  DEMANGLE_SUPPORT=1 -s SAFE_HEAP=1  -s ASSERTIONS=2   -s STACK_OVERFLOW_CHECK=1 ")
+    # web
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s ENVIRONMENT=web,worker")
+    # mem
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s TOTAL_MEMORY=512MB")
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s EXIT_RUNTIME=1")
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s WASM=1")
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s ERROR_ON_UNDEFINED_SYMBOLS=0")
+    # threads
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s USE_PTHREADS=1")
+    # exceptions    
+    set(EMSCRIPTEN_FEATURES "${EMSCRIPTEN_FEATURES} -s DISABLE_EXCEPTION_CATCHING=0 ")
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMSCRIPTEN_FEATURES}")
+    set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS}  ${EMSCRIPTEN_FEATURES}  -s USE_PTHREADS=1 ")
 endif()
 
 
@@ -166,9 +189,12 @@ set(XEUS_HEADERS
 # sources only related to the zmq based server
 set(XEUS_SOURCES_ZMQ_SERVER
     ${XEUS_SOURCE_DIR}/xauthentication.cpp
+    ${XEUS_SOURCE_DIR}/xcontrol_messenger.cpp
     ${XEUS_SOURCE_DIR}/xcontrol.hpp
     ${XEUS_SOURCE_DIR}/xcontrol.cpp
     ${XEUS_SOURCE_DIR}/xdap_tcp_client.cpp
+    ${XEUS_SOURCE_DIR}/xdebugger.cpp
+    ${XEUS_SOURCE_DIR}/xdebugger_base.cpp
     ${XEUS_SOURCE_DIR}/xheartbeat.cpp
     ${XEUS_SOURCE_DIR}/xheartbeat.hpp
     ${XEUS_SOURCE_DIR}/xzmq_messenger.hpp
@@ -183,6 +209,8 @@ set(XEUS_SOURCES_ZMQ_SERVER
     ${XEUS_SOURCE_DIR}/xserver_zmq_split.cpp
     ${XEUS_SOURCE_DIR}/xshell.hpp
     ${XEUS_SOURCE_DIR}/xshell.cpp
+    ${XEUS_SOURCE_DIR}/xtrivial_messenger.hpp
+    ${XEUS_SOURCE_DIR}/xtrivial_messenger.cpp
 )
 
 # sources only related to the emscripten wasm server
@@ -191,9 +219,6 @@ set(XEUS_SOURCES_EMSCRIPTEN_WASM_SERVER
 
 set(XEUS_SOURCES
     ${XEUS_SOURCE_DIR}/xcomm.cpp
-    ${XEUS_SOURCE_DIR}/xcontrol_messenger.cpp
-    ${XEUS_SOURCE_DIR}/xdebugger.cpp
-    ${XEUS_SOURCE_DIR}/xdebugger_base.cpp
     ${XEUS_SOURCE_DIR}/xguid.cpp
     ${XEUS_SOURCE_DIR}/xhistory_manager.cpp
     ${XEUS_SOURCE_DIR}/xinput.cpp
@@ -213,8 +238,6 @@ set(XEUS_SOURCES
     ${XEUS_SOURCE_DIR}/xserver.cpp
     ${XEUS_SOURCE_DIR}/xstring_utils.hpp
     ${XEUS_SOURCE_DIR}/xsystem.cpp
-    ${XEUS_SOURCE_DIR}/xtrivial_messenger.hpp
-    ${XEUS_SOURCE_DIR}/xtrivial_messenger.cpp
 )
 
 if(XEUS_EMSCRIPTEN_WASM_BUILD)

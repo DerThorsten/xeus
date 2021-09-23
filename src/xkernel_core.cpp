@@ -18,7 +18,7 @@
 
 #include "xkernel_core.hpp"
 #include "xeus/xhistory_manager.hpp"
-#include "xeus/xzmq_serializer.hpp"
+// #include "xeus/xzmq_serializer.hpp"
 
 using namespace std::placeholders;
 
