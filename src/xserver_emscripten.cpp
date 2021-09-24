@@ -202,7 +202,7 @@ namespace xeus
     }
 
 
-    std::unique_ptr<xserver> make_xserver_emscripten(const xconfiguration& config)
+    std::unique_ptr<xserver> make_xserver_emscripten(xcontext& /*context*/, const xconfiguration& config, nl::json::error_handler_t /*eh*/)
     {
         return std::make_unique<xserver_emscripten>(config);
     }

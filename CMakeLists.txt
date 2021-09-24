@@ -190,11 +190,9 @@ set(XEUS_HEADERS
 # sources only related to the zmq based server
 set(XEUS_SOURCES_ZMQ_SERVER
     ${XEUS_SOURCE_DIR}/xauthentication.cpp
-    ${XEUS_SOURCE_DIR}/xcontrol_messenger.cpp
     ${XEUS_SOURCE_DIR}/xcontrol.hpp
     ${XEUS_SOURCE_DIR}/xcontrol.cpp
     ${XEUS_SOURCE_DIR}/xdap_tcp_client.cpp
-    ${XEUS_SOURCE_DIR}/xdebugger.cpp
     ${XEUS_SOURCE_DIR}/xdebugger_base.cpp
     ${XEUS_SOURCE_DIR}/xheartbeat.cpp
     ${XEUS_SOURCE_DIR}/xheartbeat.hpp
@@ -221,6 +219,8 @@ set(XEUS_SOURCES_EMSCRIPTEN_WASM_SERVER
 
 set(XEUS_SOURCES
     ${XEUS_SOURCE_DIR}/xcomm.cpp
+    ${XEUS_SOURCE_DIR}/xcontrol_messenger.cpp
+    ${XEUS_SOURCE_DIR}/xdebugger.cpp
     ${XEUS_SOURCE_DIR}/xguid.cpp
     ${XEUS_SOURCE_DIR}/xhistory_manager.cpp
     ${XEUS_SOURCE_DIR}/xinput.cpp
