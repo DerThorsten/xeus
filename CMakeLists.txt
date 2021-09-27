@@ -168,6 +168,7 @@ set(XEUS_HEADERS
     ${XEUS_INCLUDE_DIR}/xeus/xdebugger_base.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xeus.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xeus_context.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xembind.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xguid.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xhistory_manager.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xinput.hpp
@@ -176,6 +177,7 @@ set(XEUS_HEADERS
     ${XEUS_INCLUDE_DIR}/xeus/xkernel_configuration.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xlogger.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xmessage.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xhelper.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xmiddleware.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver_control_main.hpp
@@ -235,6 +237,7 @@ set(XEUS_SOURCES
     ${XEUS_SOURCE_DIR}/xlogger_impl.hpp
     ${XEUS_SOURCE_DIR}/xlogger_impl.cpp
     ${XEUS_SOURCE_DIR}/xmessage.cpp
+    ${XEUS_SOURCE_DIR}/xhelper.cpp
     ${XEUS_SOURCE_DIR}/xmock_interpreter.cpp
     ${XEUS_SOURCE_DIR}/xmock_interpreter.hpp
     ${XEUS_SOURCE_DIR}/xserver.cpp
@@ -425,7 +428,7 @@ endif ()
 
 include(CTest)
 
-if(XEUS_BUILD_TESTS)
+if(XEUS_DOWNLOAD_GTEST OR GTEST_SRC_DIR OR XEUS_BUILD_TESTS)
     set(BUILD_TESTING ON)
     message(STATUS "tests enabled")
 else ()
