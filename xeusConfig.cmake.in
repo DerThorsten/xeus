@@ -25,7 +25,7 @@ include(CMakeFindDependencyMacro)
 find_dependency(xtl @xtl_REQUIRED_VERSION@)
 find_dependency(nlohmann_json @nlohmann_json_REQUIRED_VERSION@)
 
-if( NOT @XEUS_EMSCRIPTEN_WASM_BUILD@)
+if( NOT EMSCRIPTEN)
     # On Unix platforms, ZeroMQ is built with autotools and pkg-config is
     # required to locate it.
     if (WIN32)
