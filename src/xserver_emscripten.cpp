@@ -157,7 +157,7 @@ namespace xeus
     {
         if(p_js_callback != nullptr)
         {
-            (*p_js_callback)(std::string("publish"), c, serialize_msg(message));
+            (*p_js_callback)(std::string("publish"), c == channel::SHELL ? 0:1, serialize_msg(message));
         }        
     }
 
