@@ -4,11 +4,9 @@ on:
   push:
     branches:
     - master
-    - wasm
   pull_request:
     branches:
     - master
-    - wasm
 jobs:
   unix:
     
