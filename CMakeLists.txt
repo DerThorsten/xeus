@@ -58,12 +58,6 @@ option(XEUS_EMSCRIPTEN_WASM_BUILD  "build for wasm via emscripten" OFF)
 option(XEUS_BUILD_TESTS "xeus test suite" OFF)
 
 
-message(STATUS "XEUS_DISABLE_ARCH_NATIVE:   ${XEUS_DISABLE_ARCH_NATIVE}")
-message(STATUS "XEUS_BUILD_SHARED_LIBS:     ${XEUS_BUILD_SHARED_LIBS}")
-message(STATUS "XEUS_BUILD_STATIC_LIBS:     ${XEUS_BUILD_STATIC_LIBS}")
-message(STATUS "XEUS_STATIC_DEPENDENCIES:   ${XEUS_STATIC_DEPENDENCIES}")
-message(STATUS "XEUS_EMSCRIPTEN_WASM_BUILD: ${XEUS_EMSCRIPTEN_WASM_BUILD}")
-
 # Static build configuration
 # ==========================
 

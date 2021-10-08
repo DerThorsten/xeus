@@ -29,6 +29,7 @@ namespace xeus
         }
         return json_msg.dump();
     }
+    
     std::string serialize_msg(const xpub_message & message)
     {
         auto json_msg = nl::json::object();
@@ -50,11 +51,12 @@ namespace xeus
     xtrivial_emscripten_messenger::xtrivial_emscripten_messenger(xserver_emscripten* server)
     : p_server(server)
     {
-
     }
+
     xtrivial_emscripten_messenger::~xtrivial_emscripten_messenger()
     {
     }
+
     nl::json xtrivial_emscripten_messenger::send_to_shell_impl(const nl::json& message)
     {
         return p_server->notify_internal_listener(message);
@@ -75,11 +77,9 @@ namespace xeus
         }
     }
 
-
     void xserver_emscripten::js_notify_listener(const std::string & json_str, const std::string & channel)
     {
         auto json_msg = nl::json::parse(json_str);
-
         
         const auto header = json_msg["header"];
         const auto parent_header = json_msg["parent_header"];
@@ -161,7 +161,6 @@ namespace xeus
         }        
     }
 
-
     void xserver_emscripten::register_js_callback(emscripten::val callback)
     {
         if(p_js_callback == nullptr)
@@ -170,18 +169,9 @@ namespace xeus
         }
         else
         {
-            std::cout<<"callback is already registerd\n";
             throw std::runtime_error("callback is already registerd");
         }
     }
-
-  
-
-    void xserver_emscripten::loop_func()
-    {
-        //std::cout<<"loop func\n";
-    } 
-
 
     void xserver_emscripten::start_impl(xpub_message  /*message*/) 
     {
@@ -200,7 +190,6 @@ namespace xeus
     void xserver_emscripten::update_config_impl(xconfiguration& /*config*/) const 
     {
     }
-
 
     std::unique_ptr<xserver> make_xserver_emscripten(xcontext& /*context*/, const xconfiguration& config, nl::json::error_handler_t /*eh*/)
     {

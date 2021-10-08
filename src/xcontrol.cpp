@@ -9,7 +9,6 @@
 
 #include <thread>
 #include <chrono>
-#include <iostream>
 
 #include "xeus/xmiddleware.hpp"
 #include "xeus/xserver_zmq_split.hpp"

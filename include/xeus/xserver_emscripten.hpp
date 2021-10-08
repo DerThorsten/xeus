@@ -31,20 +31,12 @@ namespace xeus
     {
     public:
 
-        // using js_publisher_type = std::function<void(const std::string&, nl::json, nl::json, buffer_sequence)>;
- 
-
         xserver_emscripten(const xconfiguration& config);
-
         ~xserver_emscripten();
-
-
-        void loop_func();
 
         void js_notify_listener(const std::string & json_str, const std::string &);
         
         using xserver::notify_internal_listener;
-
 
         void register_js_callback(emscripten::val callback);
     protected:
