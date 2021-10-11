@@ -131,16 +131,13 @@ endif()
 # Source files
 # ============
 
+# headers for both zmq and emscripten based server
 set(XEUS_HEADERS
-    ${XEUS_INCLUDE_DIR}/xeus/xauthentication.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xcomm.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xcontrol_messenger.hpp
-    ${XEUS_INCLUDE_DIR}/xeus/xdap_tcp_client.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xdebugger.hpp
-    ${XEUS_INCLUDE_DIR}/xeus/xdebugger_base.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xeus.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xeus_context.hpp
-    ${XEUS_INCLUDE_DIR}/xeus/xembind.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xguid.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xhistory_manager.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xinput.hpp
@@ -150,16 +147,39 @@ set(XEUS_HEADERS
     ${XEUS_INCLUDE_DIR}/xeus/xlogger.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xmessage.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xhelper.hpp
-    ${XEUS_INCLUDE_DIR}/xeus/xmiddleware.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xsystem.hpp
+)
+
+# headers only related to the zmq based server
+set(XEUS_HEADERS_ZMQ_SERVER
+    ${XEUS_INCLUDE_DIR}/xeus/xauthentication.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xdebugger_base.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xdap_tcp_client.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver_control_main.hpp
-    ${XEUS_INCLUDE_DIR}/xeus/xserver_emscripten.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xmiddleware.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver_shell_main.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver_zmq.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xserver_zmq_split.hpp
-    ${XEUS_INCLUDE_DIR}/xeus/xsystem.hpp
     ${XEUS_INCLUDE_DIR}/xeus/xzmq_serializer.hpp
 )
+
+
+# headers only related to the emscripten wasm server
+set(XEUS_HEADERS_EMSCRIPTEN_WASM_SERVER
+    ${XEUS_INCLUDE_DIR}/xeus/xembind.hpp
+    ${XEUS_INCLUDE_DIR}/xeus/xserver_emscripten.hpp
+)
+
+if(XEUS_EMSCRIPTEN_WASM_BUILD)
+    set(XEUS_HEADERS ${XEUS_HEADERS} 
+        ${XEUS_HEADERS_EMSCRIPTEN_WASM_SERVER}
+    )
+else()
+    set(XEUS_HEADERS ${XEUS_HEADERS} 
+        ${XEUS_HEADERS_ZMQ_SERVER}
+    )
+endif()
 
 # sources only related to the zmq based server
 set(XEUS_SOURCES_ZMQ_SERVER
@@ -191,6 +211,7 @@ set(XEUS_SOURCES_EMSCRIPTEN_WASM_SERVER
     ${XEUS_SOURCE_DIR}/xserver_emscripten.cpp
 )
 
+# sources for both emscripten and zmq based server
 set(XEUS_SOURCES
     ${XEUS_SOURCE_DIR}/xcomm.cpp
     ${XEUS_SOURCE_DIR}/xcontrol_messenger.cpp
