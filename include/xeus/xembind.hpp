@@ -43,12 +43,13 @@ namespace xeus
         export_server_emscripten();
     }
 
-    xeus::xserver * get_server(xeus::xkernel * kernel){
+    xeus::xserver * get_server(xeus::xkernel * kernel)
+    {
         return &kernel->get_server();
     }
 
     template<class interpreter_type>
-    xkernel * make_xkernel()
+    std::unique_ptr<xkernel> make_xkernel()
     {
         xeus::xconfiguration config;
 
@@ -68,7 +69,7 @@ namespace xeus
                              std::move(hist),
                              nullptr
                              );
-        return kernel;
+        return std::unique_ptr<xkernel>{kernel};
     }
 
     template<class interpreter_type>
@@ -76,7 +77,7 @@ namespace xeus
     {
         using namespace emscripten;
         class_<xkernel>(kernel_name.c_str())
-            .constructor<>(&make_xkernel<interpreter_type>, allow_raw_pointers())
+            .constructor<>(&make_xkernel<interpreter_type>)
             .function("get_server", &get_server, allow_raw_pointers())
             .function("start", &xkernel::start)
         ;
