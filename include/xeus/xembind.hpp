@@ -43,7 +43,8 @@ namespace xeus
         export_server_emscripten();
     }
 
-    xeus::xserver * get_server(xeus::xkernel * kernel){
+    xeus::xserver * get_server(xeus::xkernel * kernel)
+    {
         return &kernel->get_server();
     }
 
