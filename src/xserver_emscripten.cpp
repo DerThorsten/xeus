@@ -25,7 +25,7 @@ namespace xeus
         for(const auto & bb : message.buffers())
         {   
             //std::string buffer_as_str(bb.begin(), bb.end());
-            json::binary_t jbinary(bb.begin(), bb.end());
+            nl::json::binary_t jbinary(bb.begin(), bb.end());
             buffers.push_back(jbinary);
         }
         json_msg["buffers"] = buffers;
@@ -45,7 +45,7 @@ namespace xeus
         for(const auto & bb : message.buffers())
         {   
             //std::string buffer_as_str(bb.begin(), bb.end());
-            json::binary_t jbinary(bb.begin(), bb.end());
+            nl::json::binary_t jbinary(bb.begin(), bb.end());
             buffers.push_back(jbinary);
         }
         json_msg["buffers"] = buffers;
