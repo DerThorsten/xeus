@@ -27,6 +27,7 @@ namespace xeus
             std::string buffer_as_str(bb.begin(), bb.end());
             buffers.push_back(buffer_as_str);
         }
+        json_msg["buffers"] = buffers;
         return json_msg.dump();
     }
     
@@ -45,6 +46,7 @@ namespace xeus
             std::string buffer_as_str(bb.begin(), bb.end());
             buffers.push_back(buffer_as_str);
         }
+        json_msg["buffers"] = buffers;
         return json_msg.dump();
     }
 
