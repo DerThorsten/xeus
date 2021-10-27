@@ -5,6 +5,8 @@
 #include "xeus/xkernel_configuration.hpp"
 #include "xeus/xserver_emscripten.hpp"
 
+#include "base64.hpp"
+
 #include <iostream>
 #include <emscripten.h>
 
@@ -24,9 +26,8 @@ namespace xeus
         auto buffers = nl::json::array();
         for(const auto & bb : message.buffers())
         {   
-            //std::string buffer_as_str(bb.begin(), bb.end());
-            nl::json::binary_t jbinary(bb.begin(), bb.end());
-            buffers.push_back(jbinary);
+            std::string buffer_as_str(bb.begin(), bb.end());
+            buffers.push_back(macaron::Base64::encode(buffer_as_str));
         }
         json_msg["buffers"] = buffers;
         return json_msg.dump();
@@ -44,9 +45,8 @@ namespace xeus
         auto buffers = nl::json::array();
         for(const auto & bb : message.buffers())
         {   
-            //std::string buffer_as_str(bb.begin(), bb.end());
-            nl::json::binary_t jbinary(bb.begin(), bb.end());
-            buffers.push_back(jbinary);
+            std::string buffer_as_str(bb.begin(), bb.end());
+            buffers.push_back(macaron::Base64::encode(buffer_as_str));
         }
         json_msg["buffers"] = buffers;
         return json_msg.dump();
