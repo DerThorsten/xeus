@@ -15,6 +15,7 @@
 #include "xeus/xkernel.hpp"
 #include "xeus/xeus_context.hpp"
 #include "xeus/xinterpreter.hpp"
+#include "xeus/xmessage.hpp"
 
 namespace nl = nlohmann;
 
@@ -34,11 +35,35 @@ namespace xeus
         ;
     }
 
+    nl::json json_parse(const std::string & json_str){
+        return nl::json::parse(json_str);
+    }
+
     void export_core()
     {
         using namespace emscripten;
 
         class_<nl::json>("nl_json")
+            //.class_function("parse", &nl::json::parse)
+        ;
+
+        function("json_parse", &json_parse);
+
+        class_<binary_buffer>("binary_buffer")
+        ;
+        class_<buffer_sequence>("buffer_sequence")
+            .function("size", &buffer_sequence::size)
+        ;
+
+
+        class_<xmessage_base>("xmessage_base")
+        ;
+
+        class_<xmessage, base<xmessage_base> >("xmessage")
+            .constructor<>()
+        ;
+        class_<xpub_message,  base<xmessage_base> >("xpub_message")
+            .constructor<>()
         ;
         export_server_emscripten();
     }
