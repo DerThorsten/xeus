@@ -56,7 +56,7 @@ option(XEUS_EMSCRIPTEN_WASM_BUILD  "build for wasm via emscripten" OFF)
 
 # Test options
 option(XEUS_BUILD_TESTS "xeus test suite" OFF)
-
+option(XEUS_EMSCRIPTEN_USE_TEST_FLAGS "use node specific test flags" OFF)
 
 # Static build configuration
 # ==========================
@@ -74,8 +74,14 @@ endif()
 if(XEUS_EMSCRIPTEN_WASM_BUILD)
     SET(XEUS_BUILD_SHARED_LIBS OFF)
     SET(XEUS_BUILD_STATIC_LIBS ON)
-
-    include(XeusEmscriptenWasmFlags)
+    if(XEUS_EMSCRIPTEN_USE_TEST_FLAGS)
+        include(XeusTestEmscriptenWasmFlags)
+    else()
+        include(XeusEmscriptenWasmFlags)
+    endif()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${XEUS_EMSCRIPTEN_WASM_FLAGS}")
+    set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS}  ${XEUS_EMSCRIPTEN_WASM_FLAGS}")      
+    message(STATUS ${XEUS_EMSCRIPTEN_WASM_FLAGS})
 endif()
 
 # print build configuration

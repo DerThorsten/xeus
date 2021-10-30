@@ -48,3 +48,7 @@ docs/build/
 
 # Jupyter artefacts
 .ipynb_checkpoints/
+
+# wasm files
+*.wasm
+test/emscripten_wasm_test.js
