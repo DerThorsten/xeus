@@ -10,6 +10,7 @@
 #define XEUS_XEMBIND_HPP
 
 #include <string>
+#include <iostream>
 
 #include "xeus/xserver_emscripten.hpp"
 #include "xeus/xkernel.hpp"
@@ -69,9 +70,59 @@ namespace xeus
             .function("push_back", std::function<void(buffer_sequence&, const binary_buffer &)>([](buffer_sequence& self, const binary_buffer & b){
                 self.push_back(b);
             }))
-            .function("get_mem_view_at", std::function<ems::val(buffer_sequence&, std::size_t)>([](buffer_sequence& self, std::size_t i){
-                return ems::val(ems::typed_memory_view(self[i].size(), self[i].data()));
+
+            .function("view", std::function<val(buffer_sequence&)>([](buffer_sequence& self){
+                ems::val return_array = ems::val::array();
+                for(auto &buffer : self)
+                {
+                    ems::val mem_view = ems::val(ems::typed_memory_view(buffer.size(), buffer.data()));
+                    return_array.call<void>("push", mem_view);
+                }
+                return return_array;
             }))
+            .function("copy", std::function<val(buffer_sequence&)>([](buffer_sequence& self){
+                ems::val return_array = ems::val::array();
+                for(auto &buffer : self)
+                {
+                    ems::val mem_view = ems::val(ems::typed_memory_view(buffer.size(), buffer.data()));
+                    ems::val mem_copuy = val::global("Int8Array").new_(mem_view);
+                    return_array.call<void>("push", mem_view);
+                }
+                return return_array;
+            }))
+            .function("from_js", std::function<void(buffer_sequence&, ems::val)>([](buffer_sequence& self, ems::val buffers){
+                const unsigned n_buffers = buffers["length"].as<unsigned>();
+                self.resize(n_buffers);
+
+                std::vector<ems::val> buffers_vec = ems::vecFromJSArray<ems::val>(buffers);
+                for(std::size_t i=0; i<buffers_vec.size(); ++i)
+                {
+                    // the typed array an be of any type
+                    ems::val js_array = buffers_vec[i];
+
+                    // data we need to convert js_array into an js Uint8Arra
+                    ems::val js_array_buffer = js_array["buffer"].as<ems::val>();
+                    ems::val byteOffset = js_array["byteOffset"].as<ems::val>();
+                    unsigned length = buffers_vec[i]["length"].as<unsigned>();
+                    unsigned int bytesPerElement  = js_array["BYTES_PER_ELEMENT"].as<unsigned>();
+
+                    // convert js_array into an js Uint8Array
+                    ems::val js_uint8array = val::global("Uint8Array").new_(js_array_buffer, byteOffset, length * bytesPerElement);
+
+                    // resize array on c++ size
+                    const unsigned buffer_size = js_uint8array["length"].as<unsigned>();
+                    self[i].resize(buffer_size);
+
+    
+                    // from js to c++
+                    val heap = val::module_property("HEAPU8");
+                    val memory = heap["buffer"];
+                    val memoryView = js_uint8array["constructor"].new_(memory, reinterpret_cast<uintptr_t>(self[i].data()), buffer_size);
+                    memoryView.call<void>("set", js_uint8array);
+
+
+                }
+            }), allow_raw_pointers())
         ;
 
 
