@@ -18,18 +18,18 @@
 #include "xeus/xmessage.hpp"
 
 namespace nl = nlohmann;
-
+namespace ems = emscripten;
 
 namespace xeus
 {
     void export_server_emscripten()
     {
-        using namespace emscripten;
+        //using namespace emscripten;
 
-        class_<xserver>("xserver")
+        ems::class_<xserver>("xserver")
         ;
 
-        class_<xserver_emscripten,  base<xserver> >("xserver_emscripten")
+        ems::class_<xserver_emscripten,  ems::base<xserver> >("xserver_emscripten")
             .function("notify_listener" ,     &xserver_emscripten::js_notify_listener)
             .function("register_js_callback" ,     &xserver_emscripten::register_js_callback)
         ;
@@ -37,6 +37,16 @@ namespace xeus
 
     nl::json json_parse(const std::string & json_str){
         return nl::json::parse(json_str);
+    }
+
+    binary_buffer binary_buffer_from_string(const std::string & data)
+    {
+        return binary_buffer(data.begin(), data.end());
+    }
+
+
+    ems::val get_bytes(binary_buffer & buffer) {
+        return ems::val(ems::typed_memory_view(buffer.size(), buffer.data()));
     }
 
     void export_core()
@@ -48,11 +58,20 @@ namespace xeus
         ;
 
         function("json_parse", &json_parse);
+        function("binary_buffer_from_string", &binary_buffer_from_string);
 
         class_<binary_buffer>("binary_buffer")
+            .function("get_mem_view", &get_bytes)
         ;
         class_<buffer_sequence>("buffer_sequence")
+            .constructor<>()
             .function("size", &buffer_sequence::size)
+            .function("push_back", std::function<void(buffer_sequence&, const binary_buffer &)>([](buffer_sequence& self, const binary_buffer & b){
+                self.push_back(b);
+            }))
+            .function("get_mem_view_at", std::function<ems::val(buffer_sequence&, std::size_t)>([](buffer_sequence& self, std::size_t i){
+                return ems::val(ems::typed_memory_view(self[i].size(), self[i].data()));
+            }))
         ;
 
 
