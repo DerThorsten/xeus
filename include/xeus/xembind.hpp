@@ -29,6 +29,8 @@ namespace xeus
 
 
     xmessage xmessage_from_js_message(ems::val js_message);
+    ems::val js_message_from_xmessage(const xmessage & message);
+    ems::val js_message_from_xmessage(const xpub_message & message);
 
     //ems::val js_message_from_xmessage(const )
 

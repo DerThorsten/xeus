@@ -123,7 +123,7 @@ namespace xeus
         // to a vector<vector<char>>
         if (json_msg.find("buffer") != json_msg.end())
         {
-            const auto buffers = json_msg["buffers"];
+            const auto buffers = json_msg["bufferstest_message"];
             for(std::string bb : buffers)
             {
                 buffer_sequence.emplace_back(bb.begin(), bb.end());
@@ -166,7 +166,7 @@ namespace xeus
     {
         if(p_js_callback != nullptr)
         {
-            (*p_js_callback)(std::string("shell"), 0, serialize_msg(message));
+            (*p_js_callback)(std::string("shell"), 0, js_message_from_xmessage(message));
         }
     }
 
@@ -174,7 +174,7 @@ namespace xeus
     {
         if(p_js_callback != nullptr)
         {
-            (*p_js_callback)(std::string("control"), 0, serialize_msg(message));
+            (*p_js_callback)(std::string("control"), 0, js_message_from_xmessage(message));
         }
     }
 
@@ -182,7 +182,7 @@ namespace xeus
     {
         if(p_js_callback != nullptr)
         {
-            (*p_js_callback)(std::string("stdin"), 0, serialize_msg(message));
+            (*p_js_callback)(std::string("stdin"), 0, js_message_from_xmessage(message));
         }  
     }
 
@@ -190,7 +190,7 @@ namespace xeus
     {
         if(p_js_callback != nullptr)
         {
-            (*p_js_callback)(std::string("publish"), c == channel::SHELL ? 0:1, serialize_msg(message));
+            (*p_js_callback)(std::string("publish"), c == channel::SHELL ? 0:1, js_message_from_xmessage(message));
         }        
     }
 

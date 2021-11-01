@@ -26,7 +26,7 @@ function test_buffer_sequence_js_to_cpp(XeusModule) {
 
     // And for the fun of it we go back to js:
     // c++ to js without a copy!
-    int8_restored_buffers = buffer_sequence.view()
+    int8_restored_buffers = buffer_sequence.copy()
 
     // recover convert to original type
     restored_buffers = [
@@ -34,6 +34,7 @@ function test_buffer_sequence_js_to_cpp(XeusModule) {
         new Uint8Array(  int8_restored_buffers[1].buffer, int8_restored_buffers[1].byteOffset, int8_restored_buffers[1].length),
         new Float32Array(int8_restored_buffers[2].buffer, int8_restored_buffers[2].byteOffset, int8_restored_buffers[2].length / 4)
     ]
+    console.log(restored_buffers)
 }
 
 
