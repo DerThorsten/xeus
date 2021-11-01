@@ -4,12 +4,14 @@
 #include "xeus/xmessage.hpp"
 #include "xeus/xkernel_configuration.hpp"
 #include "xeus/xserver_emscripten.hpp"
+#include "xeus/xembind.hpp"
 
 #include <iostream>
 #include <emscripten.h>
 
 namespace nl = nlohmann;
-
+namespace ems = emscripten
+;
 namespace xeus
 {
 
@@ -76,6 +78,36 @@ namespace xeus
             delete p_js_callback;
         }
     }
+
+
+
+    void xserver_emscripten::js_notify_listener_2(ems::val js_message)
+    {
+        std::cout<<" xmessage_from_js_message\n";
+        const std::string channel = js_message["channel"].as<std::string>();
+        auto message = xmessage_from_js_message(js_message);
+        std::cout<<" xmessage_from_js_message done\n";
+
+
+        if(channel == std::string("shell"))
+        {   
+            this->notify_shell_listener(std::move(message));  
+        }
+        else if(channel == std::string("control"))
+        {
+            this->notify_control_listener(std::move(message));  
+        }
+        else if(channel == std::string("stdin"))
+        {
+            this->notify_stdin_listener(std::move(message));  
+        }
+        else
+        {
+            throw std::runtime_error("unknown channel");
+        }
+        
+    }
+
 
     void xserver_emscripten::js_notify_listener(const std::string & json_str, const std::string & channel)
     {

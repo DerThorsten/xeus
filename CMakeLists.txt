@@ -221,6 +221,7 @@ set(XEUS_SOURCES_ZMQ_SERVER
 
 # sources only related to the emscripten wasm server
 set(XEUS_SOURCES_EMSCRIPTEN_WASM_SERVER
+    ${XEUS_SOURCE_DIR}/xembind.cpp
     ${XEUS_SOURCE_DIR}/xserver_emscripten.cpp
 )
 

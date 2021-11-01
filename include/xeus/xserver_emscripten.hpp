@@ -8,6 +8,10 @@
 
 #include <emscripten/bind.h>
 
+
+namespace nl = nlohmann;
+namespace ems = emscripten;
+
 namespace xeus
 {
 
@@ -34,6 +38,7 @@ namespace xeus
         xserver_emscripten(const xconfiguration& config);
         ~xserver_emscripten();
 
+        void js_notify_listener_2(ems::val js_message);
         void js_notify_listener(const std::string & json_str, const std::string &);
         
         using xserver::notify_internal_listener;
