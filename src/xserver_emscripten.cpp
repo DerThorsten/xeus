@@ -105,8 +105,9 @@ namespace xeus
         {
             throw std::runtime_error("unknown channel");
         }
-        
+
     }
+
 
 
     void xserver_emscripten::js_notify_listener(const std::string & json_str, const std::string & channel)
