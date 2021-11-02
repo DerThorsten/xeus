@@ -1,4 +1,5 @@
 add_compile_definitions(XEUS_EMSCRIPTEN_WASM_BUILD)
+add_compile_definitions(XEUS_EMSCRIPTEN_WASM_TEST_BUILD)
 
 set(XEUS_EMSCRIPTEN_WASM_FLAGS "${XEUS_EMSCRIPTEN_WASM_FLAGS} --bind")
 set(XEUS_EMSCRIPTEN_WASM_FLAGS "${XEUS_EMSCRIPTEN_WASM_FLAGS} -Wno-deprecated -Wno-unused-command-line-argument")

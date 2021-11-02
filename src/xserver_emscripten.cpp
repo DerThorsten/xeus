@@ -47,63 +47,10 @@ namespace xeus
 
 
 
-    void xserver_emscripten::js_notify_listener_2(ems::val js_message)
+    void xserver_emscripten::js_notify_listener(ems::val js_message)
     {
-        std::cout<<" xmessage_from_js_message\n";
         const std::string channel = js_message["channel"].as<std::string>();
         auto message = xmessage_from_js_message(js_message);
-        std::cout<<" xmessage_from_js_message done\n";
-
-
-        if(channel == std::string("shell"))
-        {   
-            this->notify_shell_listener(std::move(message));  
-        }
-        else if(channel == std::string("control"))
-        {
-            this->notify_control_listener(std::move(message));  
-        }
-        else if(channel == std::string("stdin"))
-        {
-            this->notify_stdin_listener(std::move(message));  
-        }
-        else
-        {
-            throw std::runtime_error("unknown channel");
-        }
-
-    }
-
-
-
-    void xserver_emscripten::js_notify_listener(const std::string & json_str, const std::string & channel)
-    {
-        auto json_msg = nl::json::parse(json_str);
-        
-        const auto header = json_msg["header"];
-        const auto parent_header = json_msg["parent_header"];
-        const auto metadata = json_msg["metadata"];
-        const auto content = json_msg["content"];
-        auto buffer_sequence = xeus::buffer_sequence();
-        // convert buffer from json-array of strings
-        // to a vector<vector<char>>
-        if (json_msg.find("buffer") != json_msg.end())
-        {
-            const auto buffers = json_msg["bufferstest_message"];
-            for(std::string bb : buffers)
-            {
-                buffer_sequence.emplace_back(bb.begin(), bb.end());
-            }
-        }
-        const auto empty_guid_list = xmessage::guid_list();
-
-        xmessage message(empty_guid_list, 
-            header,
-            parent_header,
-            metadata,
-            content,
-            buffer_sequence
-        );
 
         if(channel == std::string("shell"))
         {   
@@ -122,6 +69,7 @@ namespace xeus
             throw std::runtime_error("unknown channel");
         }
     }
+
 
     xcontrol_messenger& xserver_emscripten::get_control_messenger_impl() 
     {
@@ -132,7 +80,7 @@ namespace xeus
     {
         if(p_js_callback != nullptr)
         {
-            (*p_js_callback)(std::string("shell"), 0, js_message_from_xmessage(message));
+            (*p_js_callback)(std::string("shell"), 0, js_message_from_xmessage(message, true));
         }
     }
 
@@ -140,7 +88,7 @@ namespace xeus
     {
         if(p_js_callback != nullptr)
         {
-            (*p_js_callback)(std::string("control"), 0, js_message_from_xmessage(message));
+            (*p_js_callback)(std::string("control"), 0, js_message_from_xmessage(message, true));
         }
     }
 
@@ -148,7 +96,7 @@ namespace xeus
     {
         if(p_js_callback != nullptr)
         {
-            (*p_js_callback)(std::string("stdin"), 0, js_message_from_xmessage(message));
+            (*p_js_callback)(std::string("stdin"), 0, js_message_from_xmessage(message, true));
         }  
     }
 
@@ -156,7 +104,7 @@ namespace xeus
     {
         if(p_js_callback != nullptr)
         {
-            (*p_js_callback)(std::string("publish"), c == channel::SHELL ? 0:1, js_message_from_xmessage(message));
+            (*p_js_callback)(std::string("publish"), c == channel::SHELL ? 0:1, js_message_from_xmessage(message, true));
         }        
     }
 

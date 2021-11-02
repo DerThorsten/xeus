@@ -6,10 +6,6 @@ function test_start_kernel(Module) {
     raw_xkernel.start()
 }
 
-function test_xmessage(Module) {
-    message = new Module.xmessage();
-}
-
 function test_buffer_sequence_js_to_cpp(XeusModule) {
     
     // create a binary buffer sequence on js side 
@@ -69,14 +65,14 @@ function test_notify_listener(Module) {
             new Float32Array([1.5, 2.5, 3.5, 4.5])
         ]   
     }
-    console.log("notify_listener_2")
-    raw_xserver.notify_listener_2(message)
+    console.log("IGNORE NEXT ERROR")
+    raw_xserver.notify_listener(message)
 }
+
 
 async function test() {
     XeusModuleFactory().then((XeusModule) => {
         test_buffer_sequence_js_to_cpp(XeusModule)
-        test_xmessage(XeusModule)
         test_start_kernel(XeusModule)
         test_notify_listener(XeusModule)
     })

@@ -23,10 +23,16 @@ namespace ems = emscripten;
 
 namespace xeus
 {
+    nl::json json_from_js_object(ems::val js_obj)
+    {
+        ems::val js_json_lib = ems::val::global("JSON");
+        const std::string json_str = js_json_lib.call<std::string>("stringify",js_obj);
+        return nl::json::parse(json_str);      
+    }
 
 
-    void buffer_sequence_from_js_buffer(buffer_sequence& self, ems::val buffers){
-
+    void buffer_sequence_from_js_buffer(buffer_sequence& self, ems::val buffers)
+    {
         const unsigned n_buffers = buffers["length"].as<unsigned>();
         self.resize(n_buffers);
 
@@ -60,49 +66,6 @@ namespace xeus
                 length_uint8);
             memoryView.call<void>("set", js_uint8array);
         }
-
-    }
-
-    // void buffer_sequence_from_js_buffer(buffer_sequence& self, ems::val buffers){
-
-    //     const unsigned n_buffers = buffers["length"].as<unsigned>();
-    //     self.resize(n_buffers);
-
-    //     std::vector<ems::val> buffers_vec = ems::vecFromJSArray<ems::val>(buffers);
-    //     for(std::size_t i=0; i<buffers_vec.size(); ++i)
-    //     {
-    //         // the typed array an be of any type
-    //         ems::val js_array = buffers_vec[i];
-
-    //         // data we need to convert js_array into an js Uint8Arra
-    //         ems::val js_array_buffer = js_array["buffer"].as<ems::val>();
-    //         ems::val byteOffset = js_array["byteOffset"].as<ems::val>();
-    //         unsigned length = buffers_vec[i]["length"].as<unsigned>();
-    //         unsigned int bytesPerElement  = js_array["BYTES_PER_ELEMENT"].as<unsigned>();
-
-    //         // convert js_array into an js Uint8Array
-    //         ems::val js_uint8array = ems::val::global("Uint8Array").new_(js_array_buffer, byteOffset, length * bytesPerElement);
-
-    //         // resize array on c++ size
-    //         const unsigned buffer_size = js_uint8array["length"].as<unsigned>();
-    //         self[i].resize(buffer_size);
-
-
-    //         // from js to c++
-    //         ems::val heap = ems::val::module_property("HEAPU8");
-    //         ems::val memory = heap["buffer"];
-    //         ems::val memoryView = js_uint8array["constructor"].new_(memory, reinterpret_cast<uintptr_t>(self[i].data()), buffer_size);
-    //         memoryView.call<void>("set", js_uint8array);
-
-
-    //     }
-
-    // }
-    nl::json json_from_js_object(ems::val js_obj)
-    {
-        ems::val js_json_lib = ems::val::global("JSON");
-        const std::string json_str = js_json_lib.call<std::string>("stringify",js_obj);
-        return nl::json::parse(json_str);      
     }
 
 
@@ -111,7 +74,6 @@ namespace xeus
         // message base data
         // (can be moved into xmessage)
         xmessage_base_data message_base_data;
-
 
         // handle buffers
         ems::val js_buffers = js_message["buffers"].as<ems::val>();
@@ -129,62 +91,29 @@ namespace xeus
         return xmessage(xmessage::guid_list(), std::move(message_base_data));
     }
 
-    // // OLD WORKING
-    // xmessage xmessage_from_js_message(ems::val js_message)
-    // {   
-    //     // message base data
-    //     // (can be moved into xmessage)
-    //     xmessage_base_data message_base_data;
-
-    //     // get the json part
-    //     ems::val js_json_lib = ems::val::global("JSON");
-    //     const std::string json_str = js_json_lib.call<std::string>("stringify",js_message);
-    //     const auto m = nl::json::parse(json_str);
-    //     message_base_data.m_header        = m["header"];
-    //     message_base_data.m_parent_header = m["parent_header"];
-    //     message_base_data.m_metadata      = m["metadata"];
-    //     message_base_data.m_content       = m["content"];
-        
-    //     // get the js buffers
-    //     ems::val js_buffers = js_message["buffers"].as<ems::val>();
-
-    //     // the binary buffers part
-    //     buffer_sequence_from_js_buffer(message_base_data.m_buffers, js_buffers);
-    //     return xmessage(std::vector<std::string>(), std::move(message_base_data));
-    // }
-
-
-    ems::val js_message_from_xmessage(const xmessage & message)
+    ems::val js_buffer_array_from_buffer_sequence(const buffer_sequence & binary_buffers, bool copy)
     {
-        // convert the json part to a string
-        auto json_msg = nl::json::object();
-        json_msg["header"] = message.header();
-        json_msg["parent_header"] = message.parent_header();
-        json_msg["metadata"] = message.metadata();
-        json_msg["content"] = message.content();
-        const std::string json_str_msg = json_msg.dump();
-
-        // parse string as js message
-        ems::val js_json_lib = ems::val::global("JSON");
-        ems::val js_msg  =  js_json_lib.call<ems::val>("parse", json_str_msg);
-
-        // c++  buffers to js arrays
-
         ems::val js_buffer_array = ems::val::array();
-        for(const auto & const_buffer : message.buffers())
+        for(const auto & const_buffer : binary_buffers)
         {   
             auto & buffer = const_cast<binary_buffer & >(const_buffer);
 
             ems::val mem_view = ems::val(ems::typed_memory_view(buffer.size(), buffer.data()));
-            ems::val mem_copy = ems::val::global("Int8Array").new_(mem_view);
-            js_buffer_array.call<void>("push", mem_copy);
+            if(copy)
+            {
+                ems::val mem_copy = ems::val::global("Int8Array").new_(mem_view);
+                js_buffer_array.call<void>("push", mem_copy);
+            }
+            else
+            {
+                js_buffer_array.call<void>("push", mem_view);
+            }
         }
-        js_msg.set("buffers", js_buffer_array);
-
-        return js_msg;
+        return js_buffer_array;
     }
 
-    ems::val js_message_from_xmessage(const xpub_message & message)
+
+    ems::val js_message_from_xmessage(const xpub_message & message, bool copy)
     {
         // convert the json part to a string
         auto json_msg = nl::json::object();
@@ -200,35 +129,43 @@ namespace xeus
         ems::val js_msg  =  js_json_lib.call<ems::val>("parse", json_str_msg);
 
         // c++  buffers to js arrays
-
-        ems::val js_buffer_array = ems::val::array();
-        for(const auto & const_buffer : message.buffers())
-        {   
-            auto & buffer = const_cast<binary_buffer & >(const_buffer);
-
-            ems::val mem_view = ems::val(ems::typed_memory_view(buffer.size(), buffer.data()));
-            ems::val mem_copy = ems::val::global("Int8Array").new_(mem_view);
-            js_buffer_array.call<void>("push", mem_copy);
-        }
+        ems::val js_buffer_array = js_buffer_array_from_buffer_sequence(message.buffers(), copy);
         js_msg.set("buffers", js_buffer_array);
-        
+
         return js_msg;
     }
 
+    ems::val js_message_from_xmessage(const xmessage & message, bool copy)
+    {
+        // convert the json part to a string
+        auto json_msg = nl::json::object();
+        json_msg["header"] = message.header();
+        json_msg["parent_header"] = message.parent_header();
+        json_msg["metadata"] = message.metadata();
+        json_msg["content"] = message.content();
+        const std::string json_str_msg = json_msg.dump();
 
+        // parse string as js message
+        ems::val js_json_lib = ems::val::global("JSON");
+        ems::val js_msg  =  js_json_lib.call<ems::val>("parse", json_str_msg);
+
+        // c++  buffers to js arrays
+        ems::val js_buffer_array = js_buffer_array_from_buffer_sequence(message.buffers(), copy);
+        js_msg.set("buffers", js_buffer_array);
+
+        return js_msg;
+    }
 
 
     //ems::val js_message_from_xmessage(const )
     void export_server_emscripten()
     {
-        //using namespace emscripten;
 
         ems::class_<xserver>("xserver")
         ;
 
         ems::class_<xserver_emscripten,  ems::base<xserver> >("xserver_emscripten")
             .function("notify_listener" ,     &xserver_emscripten::js_notify_listener)
-            .function("notify_listener_2" ,     &xserver_emscripten::js_notify_listener_2)
             .function("register_js_callback" ,     &xserver_emscripten::register_js_callback)
         ;
     }
@@ -242,12 +179,7 @@ namespace xeus
     {
         using namespace emscripten;
 
-        class_<nl::json>("nl_json")
-            //.class_function("parse", &nl::json::parse)
-        ;
-
-        function("json_parse", &json_parse);
-
+        #ifdef XEUS_EMSCRIPTEN_WASM_TEST_BUILD
         class_<buffer_sequence>("buffer_sequence")
             .constructor<>()
             .function("size", &buffer_sequence::size)
@@ -256,68 +188,16 @@ namespace xeus
             }))
 
             .function("view", std::function<val(buffer_sequence&)>([](buffer_sequence& self){
-                ems::val return_array = ems::val::array();
-                for(auto &buffer : self)
-                {
-                    ems::val mem_view = ems::val(ems::typed_memory_view(buffer.size(), buffer.data()));
-                    return_array.call<void>("push", mem_view);
-                }
-                return return_array;
+                return js_buffer_array_from_buffer_sequence(self, /*copy*/ false);
             }))
             .function("copy", std::function<val(buffer_sequence&)>([](buffer_sequence& self){
-                ems::val return_array = ems::val::array();
-                for(auto &buffer : self)
-                {
-                    ems::val mem_view = ems::val(ems::typed_memory_view(buffer.size(), buffer.data()));
-                    ems::val mem_copy = val::global("Int8Array").new_(mem_view);
-                    return_array.call<void>("push", mem_copy);
-                }
-                return return_array;
+                return js_buffer_array_from_buffer_sequence(self, /*copy*/ true);
             }))
             .function("from_js", std::function<void(buffer_sequence&, ems::val)>([](buffer_sequence& self, ems::val buffers){
-                const unsigned n_buffers = buffers["length"].as<unsigned>();
-                self.resize(n_buffers);
-
-                std::vector<ems::val> buffers_vec = ems::vecFromJSArray<ems::val>(buffers);
-                for(std::size_t i=0; i<buffers_vec.size(); ++i)
-                {
-                    // the typed array an be of any type
-                    ems::val js_array = buffers_vec[i];
-
-                    // data we need to convert js_array into an js Uint8Arra
-                    ems::val js_array_buffer = js_array["buffer"].as<ems::val>();
-                    ems::val byteOffset = js_array["byteOffset"].as<ems::val>();
-                    unsigned length = buffers_vec[i]["length"].as<unsigned>();
-                    unsigned int bytesPerElement  = js_array["BYTES_PER_ELEMENT"].as<unsigned>();
-
-                    // convert js_array into an js Uint8Array
-                    ems::val js_uint8array = val::global("Uint8Array").new_(js_array_buffer, byteOffset, length * bytesPerElement);
-
-                    // resize array on c++ size
-                    const unsigned buffer_size = js_uint8array["length"].as<unsigned>();
-                    self[i].resize(buffer_size);
-
-    
-                    // from js to c++
-                    val heap = val::module_property("HEAPU8");
-                    val memory = heap["buffer"];
-                    val memoryView = js_uint8array["constructor"].new_(memory, reinterpret_cast<uintptr_t>(self[i].data()), buffer_size);
-                    memoryView.call<void>("set", js_uint8array);
-
-
-                }
+                buffer_sequence_from_js_buffer(self, buffers);
             }), allow_raw_pointers())
         ;
-
-        class_<xmessage_base>("xmessage_base")
-        ;
-
-        class_<xmessage, base<xmessage_base> >("xmessage")
-            .constructor<>()
-        ;
-        class_<xpub_message,  base<xmessage_base> >("xpub_message")
-            .constructor<>()
-        ;
+        #endif
         export_server_emscripten();
     }
 
@@ -328,3 +208,4 @@ namespace xeus
 }
 
 #endif
+

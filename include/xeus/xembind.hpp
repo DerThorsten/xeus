@@ -29,8 +29,8 @@ namespace xeus
 
 
     xmessage xmessage_from_js_message(ems::val js_message);
-    ems::val js_message_from_xmessage(const xmessage & message);
-    ems::val js_message_from_xmessage(const xpub_message & message);
+    ems::val js_message_from_xmessage(const xmessage & message, bool copy);
+    ems::val js_message_from_xmessage(const xpub_message & message, bool copy);
 
     //ems::val js_message_from_xmessage(const )
 
@@ -39,7 +39,6 @@ namespace xeus
 
     nl::json json_parse(const std::string & json_str);
 
-  
     void export_core();
 
     xeus::xserver * get_server(xeus::xkernel * kernel);
@@ -56,6 +55,11 @@ namespace xeus
         auto interpreter = interpreter_ptr(new interpreter_type());
 
         auto context = xeus::make_empty_context();
+
+
+        #if defined(XEUS_EMSCRIPTEN_WASM_TEST_BUILD)
+            std::cout<<"use test build\n";
+        #endif
 
         xeus::xkernel * kernel = new xeus::xkernel(config,
                              xeus::get_user_name(),
