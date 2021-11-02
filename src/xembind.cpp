@@ -119,7 +119,7 @@ namespace xeus
 
         // the json part 
         // (and clear buffer to avoid costly serialization of  buffers)
-        //js_message.set("bufers",ems::val::array());
+        js_message.set("bufers",ems::val::array());
         const auto m = json_from_js_object(js_message);
         message_base_data.m_header        = m["header"];
         message_base_data.m_parent_header = m["parent_header"];
