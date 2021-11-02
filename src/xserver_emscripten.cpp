@@ -15,41 +15,7 @@ namespace ems = emscripten
 namespace xeus
 {
 
-    std::string serialize_msg(const xmessage & message)
-    {
-        auto json_msg = nl::json::object();
-        json_msg["header"] = message.header();
-        json_msg["parent_header"] = message.parent_header();
-        json_msg["metadata"] = message.metadata();
-        json_msg["content"] = message.content();
-
-        auto buffers = nl::json::array();
-        for(const auto & bb : message.buffers())
-        {   
-            std::string buffer_as_str(bb.begin(), bb.end());
-            buffers.push_back(buffer_as_str);
-        }
-        return json_msg.dump();
-    }
-    
-    std::string serialize_msg(const xpub_message & message)
-    {
-        auto json_msg = nl::json::object();
-        json_msg["header"] = message.header();
-        json_msg["parent_header"] = message.parent_header();
-        json_msg["metadata"] = message.metadata();
-        json_msg["content"] = message.content();
-        json_msg["topic"] = message.topic();
-
-        auto buffers = nl::json::array();
-        for(const auto & bb : message.buffers())
-        {   
-            std::string buffer_as_str(bb.begin(), bb.end());
-            buffers.push_back(buffer_as_str);
-        }
-        return json_msg.dump();
-    }
-
+   
     xtrivial_emscripten_messenger::xtrivial_emscripten_messenger(xserver_emscripten* server)
     : p_server(server)
     {
