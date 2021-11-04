@@ -73,7 +73,6 @@ namespace xeus
         }
     }
 
-    
     // "transport" binary buffers from C++ to JS
     ems::val js_buffer_array_from_buffer_sequence(const buffer_sequence & binary_buffers, bool copy)
     {
@@ -118,7 +117,6 @@ namespace xeus
         return xmessage(xmessage::guid_list(), std::move(message_base_data));
     }
 
-
     ems::val js_message_from_xmessage(const xpub_message & message, bool copy)
     {
         // convert the json part to a string
@@ -162,7 +160,6 @@ namespace xeus
         return js_msg;
     }
 
-
     //ems::val js_message_from_xmessage(const )
     void export_server_emscripten()
     {
@@ -176,11 +173,6 @@ namespace xeus
         ;
     }
 
-    nl::json json_parse(const std::string & json_str){
-        return nl::json::parse(json_str);
-    }
-
-  
     void export_core()
     {
         #ifdef XEUS_EMSCRIPTEN_WASM_TEST_BUILD

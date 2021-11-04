@@ -82,7 +82,7 @@ jobs:
   win:
     
     runs-on: ${{ matrix.os }}
-     
+
     strategy:
       fail-fast: false
       matrix:
@@ -156,9 +156,9 @@ jobs:
           nmake
 
   emscripten_wasm:
-    
+
     runs-on: ubuntu-20.04
-     
+    
     strategy:
       fail-fast: false
       matrix:

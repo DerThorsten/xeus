@@ -41,12 +41,10 @@ function test_buffer_sequence_js_to_cpp(XeusModule) {
 
 }
 
-
 function test_notify_listener(Module) {
     raw_xkernel = new Module.xkernel();
     var raw_xserver = raw_xkernel.get_server();
     raw_xkernel.start()
-
 
     header = {
         'msg_id'    : "550e8400-e29b-11d4-a716-446655440000",
@@ -76,7 +74,6 @@ function test_notify_listener(Module) {
     console.log("IGNORE NEXT ERROR")
     raw_xserver.notify_listener(message)
 }
-
 
 async function test() {
     XeusModuleFactory().then((XeusModule) => {

@@ -1,4 +1,3 @@
-
 #include "xeus/xeus.hpp"
 #include "xeus/xserver.hpp"
 #include "xeus/xmessage.hpp"
@@ -10,8 +9,8 @@
 #include <emscripten.h>
 
 namespace nl = nlohmann;
-namespace ems = emscripten
-;
+namespace ems = emscripten;
+
 namespace xeus
 {
 
@@ -44,8 +43,6 @@ namespace xeus
             delete p_js_callback;
         }
     }
-
-
 
     void xserver_emscripten::js_notify_listener(ems::val js_message)
     {

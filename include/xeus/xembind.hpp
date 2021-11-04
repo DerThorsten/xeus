@@ -10,7 +10,6 @@
 #define XEUS_XEMBIND_HPP
 
 #include <string>
-#include <iostream>
 
 #include "xeus/xserver_emscripten.hpp"
 #include "xeus/xkernel.hpp"
@@ -24,21 +23,12 @@ namespace ems = emscripten;
 namespace xeus
 {
 
-
     void buffer_sequence_from_js_buffer(buffer_sequence& self, ems::val buffers);
-
-
     xmessage xmessage_from_js_message(ems::val js_message);
     ems::val js_message_from_xmessage(const xmessage & message, bool copy);
     ems::val js_message_from_xmessage(const xpub_message & message, bool copy);
 
-    //ems::val js_message_from_xmessage(const )
-
-
     void export_server_emscripten();
-
-    nl::json json_parse(const std::string & json_str);
-
     void export_core();
 
     xeus::xserver * get_server(xeus::xkernel * kernel);
@@ -52,14 +42,9 @@ namespace xeus
         history_manager_ptr hist = xeus::make_in_memory_history_manager();
 
         using interpreter_ptr = std::unique_ptr<interpreter_type>;
+        
         auto interpreter = interpreter_ptr(new interpreter_type());
-
         auto context = xeus::make_empty_context();
-
-
-        #if defined(XEUS_EMSCRIPTEN_WASM_TEST_BUILD)
-            std::cout<<"use test build\n";
-        #endif
 
         xeus::xkernel * kernel = new xeus::xkernel(config,
                              xeus::get_user_name(),
