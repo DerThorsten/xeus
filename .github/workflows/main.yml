@@ -107,7 +107,7 @@ jobs:
         shell: cmd
         run: |
           call C:\Users\runneradmin\micromamba\condabin\micromamba.bat activate xeus
-          .\micromamba.exe install cxx-compiler -c conda-forge -y
+          micromamba install cxx-compiler -c conda-forge -y
 
       - name: cmake configure
         shell: cmd
