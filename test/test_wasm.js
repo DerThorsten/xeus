@@ -1,7 +1,5 @@
 var assert = require('assert');
-    
-
-XeusModuleFactory = require('./emscripten_wasm_test.js')
+var XeusModuleFactory = require('./emscripten_wasm_test.js')
 
 function test_start_kernel(Module) {
     raw_xkernel = new Module.xkernel();

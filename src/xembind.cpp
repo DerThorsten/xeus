@@ -183,25 +183,23 @@ namespace xeus
   
     void export_core()
     {
-        using namespace emscripten;
-
         #ifdef XEUS_EMSCRIPTEN_WASM_TEST_BUILD
-        class_<buffer_sequence>("buffer_sequence")
+        ems::class_<buffer_sequence>("buffer_sequence")
             .constructor<>()
             .function("size", &buffer_sequence::size)
             .function("push_back", std::function<void(buffer_sequence&, const binary_buffer &)>([](buffer_sequence& self, const binary_buffer & b){
                 self.push_back(b);
             }))
 
-            .function("view", std::function<val(buffer_sequence&)>([](buffer_sequence& self){
+            .function("view", std::function<ems::val(buffer_sequence&)>([](buffer_sequence& self){
                 return js_buffer_array_from_buffer_sequence(self, /*copy*/ false);
             }))
-            .function("copy", std::function<val(buffer_sequence&)>([](buffer_sequence& self){
+            .function("copy", std::function<ems::val(buffer_sequence&)>([](buffer_sequence& self){
                 return js_buffer_array_from_buffer_sequence(self, /*copy*/ true);
             }))
             .function("from_js", std::function<void(buffer_sequence&, ems::val)>([](buffer_sequence& self, ems::val buffers){
                 buffer_sequence_from_js_buffer(self, buffers);
-            }), allow_raw_pointers())
+            }), ems::allow_raw_pointers())
         ;
         #endif
         export_server_emscripten();

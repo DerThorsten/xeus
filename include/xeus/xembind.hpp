@@ -75,10 +75,9 @@ namespace xeus
     template<class interpreter_type>
     void export_kernel(const std::string kernel_name)
     {
-        using namespace emscripten;
-        class_<xkernel>(kernel_name.c_str())
+        ems::class_<xkernel>(kernel_name.c_str())
             .constructor<>(&make_xkernel<interpreter_type>)
-            .function("get_server", &get_server, allow_raw_pointers())
+            .function("get_server", &get_server, ems::allow_raw_pointers())
             .function("start", &xkernel::start)
         ;
     }
