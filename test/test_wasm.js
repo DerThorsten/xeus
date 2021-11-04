@@ -41,7 +41,6 @@ function test_buffer_sequence_js_to_cpp(XeusModule) {
     assert.deepEqual(buffers[2], restored_buffers[2])
     assert.deepEqual(buffers[3], restored_buffers[3])
 
-    console.log(restored_buffers)
 }
 
 

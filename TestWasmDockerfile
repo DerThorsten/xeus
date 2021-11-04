@@ -1,4 +1,5 @@
-FROM emscripten/emsdk:2.0.32
+ARG EMSCRIPTEN_VER=2.0.32
+FROM emscripten/emsdk:$EMSCRIPTEN_VER
 
 ARG USER_ID
 ARG GROUP_ID
