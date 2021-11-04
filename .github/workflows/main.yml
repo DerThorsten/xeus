@@ -219,5 +219,5 @@ jobs:
 
       - uses: docker-practice/actions-setup-docker@master
       - run: |
-          chmod +x ./test/test_emscripten.sh
-          ./test/test_emscripten
+          chmod +x test/test_emscripten.sh
+          .test/test_emscripten
