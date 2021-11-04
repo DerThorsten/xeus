@@ -1,3 +1,6 @@
+var assert = require('assert');
+    
+
 XeusModuleFactory = require('./emscripten_wasm_test.js')
 
 function test_start_kernel(Module) {
@@ -13,7 +16,8 @@ function test_buffer_sequence_js_to_cpp(XeusModule) {
     buffers = [
         new Int8Array([-1,2,-3,4,-5]),
         new Uint8Array([10,20,30,40,50]),
-        new Float32Array([1.5, 2.5, 3.5, 4.5])
+        new Float32Array([1.5, 2.5, 3.5, 4.5]),
+        new Int32Array([-10,10,20, 30, 40])
     ]
 
     // from js to c++
@@ -22,14 +26,21 @@ function test_buffer_sequence_js_to_cpp(XeusModule) {
 
     // And for the fun of it we go back to js:
     // c++ to js without a copy!
-    int8_restored_buffers = buffer_sequence.copy()
+    int8_restored_buffers = buffer_sequence.view()
 
     // recover convert to original type
     restored_buffers = [
         new Int8Array(   int8_restored_buffers[0].buffer, int8_restored_buffers[0].byteOffset, int8_restored_buffers[0].length),
         new Uint8Array(  int8_restored_buffers[1].buffer, int8_restored_buffers[1].byteOffset, int8_restored_buffers[1].length),
-        new Float32Array(int8_restored_buffers[2].buffer, int8_restored_buffers[2].byteOffset, int8_restored_buffers[2].length / 4)
+        new Float32Array(int8_restored_buffers[2].buffer, int8_restored_buffers[2].byteOffset, int8_restored_buffers[2].length / 4),
+        new Int32Array(  int8_restored_buffers[3].buffer, int8_restored_buffers[3].byteOffset, int8_restored_buffers[3].length / 4)
     ]
+
+    assert.deepEqual(buffers[0], restored_buffers[0])
+    assert.deepEqual(buffers[1], restored_buffers[1])
+    assert.deepEqual(buffers[2], restored_buffers[2])
+    assert.deepEqual(buffers[3], restored_buffers[3])
+
     console.log(restored_buffers)
 }
 

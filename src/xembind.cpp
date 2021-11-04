@@ -30,7 +30,7 @@ namespace xeus
         return nl::json::parse(json_str);      
     }
 
-
+    // "transport" binary buffers from JS to C++
     void buffer_sequence_from_js_buffer(buffer_sequence& self, ems::val buffers)
     {
         const unsigned n_buffers = buffers["length"].as<unsigned>();
@@ -48,6 +48,7 @@ namespace xeus
             const unsigned length = js_array["length"].as<unsigned> ();
             const unsigned bytes_per_element = js_array["BYTES_PER_ELEMENT"].as<unsigned>();
             const unsigned length_uint8 = length * bytes_per_element;
+
             // convert js typed-array into an  Uint8Array
             ems::val js_uint8array = ems::val::global("Uint8Array").new_(
                 js_array_buffer, 
@@ -58,16 +59,42 @@ namespace xeus
             // resize array on c++ size
             self[i].resize(length_uint8);
 
-            //copy from js to c++
+            // copy values from js side to vectors mem
+            // - create a javascript "UInt8(!) (not Int8) array"
+            //   which is using the vector ptr as buffer
             ems::val heap = ems::val::module_property("HEAPU8");
             ems::val memory = heap["buffer"];
-            ems::val memoryView = js_uint8array["constructor"].new_(memory, 
+            ems::val memory_view = js_uint8array["constructor"].new_(memory, 
                 reinterpret_cast<uintptr_t>(self[i].data()), 
                 length_uint8);
-            memoryView.call<void>("set", js_uint8array);
+
+            // - copy the js arrays content into the c++ arrays content
+            memory_view.call<void>("set", js_uint8array);
         }
     }
 
+    
+    // "transport" binary buffers from C++ to JS
+    ems::val js_buffer_array_from_buffer_sequence(const buffer_sequence & binary_buffers, bool copy)
+    {
+        ems::val js_buffer_array = ems::val::array();
+        for(const auto & const_buffer : binary_buffers)
+        {   
+            auto & buffer = const_cast<binary_buffer & >(const_buffer);
+
+            ems::val mem_view = ems::val(ems::typed_memory_view(buffer.size(), buffer.data()));
+            if(copy)
+            {
+                ems::val mem_copy = ems::val::global("Int8Array").new_(mem_view);
+                js_buffer_array.call<void>("push", mem_copy);
+            }
+            else
+            {
+                js_buffer_array.call<void>("push", mem_view);
+            }
+        }
+        return js_buffer_array;
+    }
 
     xmessage xmessage_from_js_message(ems::val js_message)
     {   
@@ -89,27 +116,6 @@ namespace xeus
         message_base_data.m_content       = m["content"];
         
         return xmessage(xmessage::guid_list(), std::move(message_base_data));
-    }
-
-    ems::val js_buffer_array_from_buffer_sequence(const buffer_sequence & binary_buffers, bool copy)
-    {
-        ems::val js_buffer_array = ems::val::array();
-        for(const auto & const_buffer : binary_buffers)
-        {   
-            auto & buffer = const_cast<binary_buffer & >(const_buffer);
-
-            ems::val mem_view = ems::val(ems::typed_memory_view(buffer.size(), buffer.data()));
-            if(copy)
-            {
-                ems::val mem_copy = ems::val::global("Int8Array").new_(mem_view);
-                js_buffer_array.call<void>("push", mem_copy);
-            }
-            else
-            {
-                js_buffer_array.call<void>("push", mem_view);
-            }
-        }
-        return js_buffer_array;
     }
 
 
