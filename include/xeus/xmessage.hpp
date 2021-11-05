@@ -35,7 +35,7 @@ namespace xeus
     class XEUS_API xmessage_base
     {
     public:
-
+        ~xmessage_base() = default;
         xmessage_base(const xmessage_base&) = delete;
         xmessage_base& operator=(const xmessage_base&) = delete;
 
@@ -56,7 +56,7 @@ namespace xeus
                       nl::json content,
                       buffer_sequence buffers);
         xmessage_base(xmessage_base_data&& data);
-        ~xmessage_base() = default;
+
 
         xmessage_base(xmessage_base&&) = default;
         xmessage_base& operator=(xmessage_base&&) = default;
