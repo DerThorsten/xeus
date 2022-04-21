@@ -13,13 +13,13 @@ namespace ems = emscripten;
 
 namespace xeus
 {
-    EM_JS(ems::EM_VAL, get_stdin, (), {
-      return Asyncify.handleAsync(() => {
-        return globalThis.get_stdin().then(msg => {
-          return Emval.toHandle(msg);
-        });
-      });
-    });
+    // EM_JS(ems::EM_VAL, get_stdin, (), {
+    //   return Asyncify.handleAsync(() => {
+    //     return globalThis.get_stdin().then(msg => {
+    //       return Emval.toHandle(msg);
+    //     });
+    //   });
+    // });
 
     EM_JS(void, post_kernel_message, (const char* channel, ems::EM_VAL message_handle), {
       var message = Emval.toValue(message_handle);
@@ -94,16 +94,16 @@ namespace xeus
     {
         post_kernel_message("stdin", js_message_from_xmessage(message, true).as_handle());
         // Block until a response to the input request is received.
-        ems::val js_message = ems::val::take_ownership(get_stdin());
-        try
-        {
-            auto reply = xmessage_from_js_message(js_message);
-            xserver::notify_stdin_listener(std::move(reply));
-        }
-        catch (std::exception& e)
-        {
-            std::cerr << e.what() << std::endl;
-        }
+        // ems::val js_message = ems::val::take_ownership(get_stdin());
+        // try
+        // {
+        //     auto reply = xmessage_from_js_message(js_message);
+        //     xserver::notify_stdin_listener(std::move(reply));
+        // }
+        // catch (std::exception& e)
+        // {
+        //     std::cerr << e.what() << std::endl;
+        // }
     }
 
     void xserver_emscripten::publish_impl(xpub_message message, channel) 

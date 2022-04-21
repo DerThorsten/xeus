@@ -274,12 +274,12 @@ include(CheckCXXCompilerFlag)
 string(TOUPPER "${CMAKE_BUILD_TYPE}" U_CMAKE_BUILD_TYPE)
 
 if (XEUS_STATIC_DEPENDENCIES AND NOT MSVC AND NOT APPLE)
-	# Explicitly finds and links with libsodium.a
-	# because it is not exported as a dependency by
-	# the static build of libzmq. Remove this when
-	# it is fixed upstream.
-	set(sodium_USE_STATIC_LIBS ON)
-	find_package(sodium REQUIRED)
+    # Explicitly finds and links with libsodium.a
+    # because it is not exported as a dependency by
+    # the static build of libzmq. Remove this when
+    # it is fixed upstream.
+    set(sodium_USE_STATIC_LIBS ON)
+    find_package(sodium REQUIRED)
 endif ()
 
 macro(xeus_create_target target_name linkage output_name)
@@ -411,7 +411,9 @@ macro(xeus_create_target target_name linkage output_name)
          PUBLIC --std=c++17
          PUBLIC -Wno-deprecated
          PUBLIC "SHELL: -s USE_PTHREADS=0"
-         PUBLIC "SHELL: -s DISABLE_EXCEPTION_CATCHING=0"
+         # PUBLIC "SHELL: -s DISABLE_EXCEPTION_CATCHING=0"
+         PUBLIC "SHELL: -fwasm-exceptions"
+         # PUBLIC "SHELL: -s EXPORTED_FUNCTIONS='[\"_post_kernel_message\"]'"
        )
 
        target_link_options(${target_name}
@@ -427,15 +429,17 @@ macro(xeus_create_target target_name linkage output_name)
          PUBLIC "SHELL: -s EXIT_RUNTIME=1"
          PUBLIC "SHELL: -s WASM=1"
          PUBLIC "SHELL: -s USE_PTHREADS=0"
-         PUBLIC "SHELL: -s DISABLE_EXCEPTION_CATCHING=0"
+         # PUBLIC "SHELL: -s DISABLE_EXCEPTION_CATCHING=0"
          PUBLIC "SHELL: -s ENVIRONMENT=${XEUS_EMSCRIPTEN_ENVIRONMENT}"
+         PUBLIC "SHELL: -fwasm-exceptions"
+         # PUBLIC "SHELL: -s EXPORTED_FUNCTIONS='[\"_post_kernel_message\"]'"
        )
 
-       target_link_options(${target_name}
-	 INTERFACE "SHELL: -s ASYNCIFY=1"
-	 INTERFACE "SHELL: -s 'ASYNCIFY_IMPORTS=[\"get_stdin\"]'"
-	 INTERFACE "SHELL: -s 'ASYNCIFY_STACK_SIZE=100000'"
-       )
+       # target_link_options(${target_name}
+       #   INTERFACE "SHELL: -s ASYNCIFY=1"
+       #   INTERFACE "SHELL: -s 'ASYNCIFY_IMPORTS=[\"get_stdin\"]'"
+       #   INTERFACE "SHELL: -s 'ASYNCIFY_STACK_SIZE=100000'"
+       # )
     endif()
 endmacro()
 

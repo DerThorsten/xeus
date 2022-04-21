@@ -10,6 +10,7 @@
 #define XEUS_XEMBIND_HPP
 
 #include <string>
+#include <iostream>
 
 #include "xeus/xserver_emscripten.hpp"
 #include "xeus/xkernel.hpp"
@@ -36,6 +37,7 @@ namespace xeus
     template<class interpreter_type>
     std::unique_ptr<xkernel> make_xkernel()
     {
+        std::cout<<"make_xkernel 1\n"<<std::flush;
         xeus::xconfiguration config;
 
         using history_manager_ptr = std::unique_ptr<xeus::xhistory_manager>;
@@ -43,9 +45,12 @@ namespace xeus
 
         using interpreter_ptr = std::unique_ptr<interpreter_type>;
         
+        std::cout<<"make_xkernel 2\n"<<std::flush;
         auto interpreter = interpreter_ptr(new interpreter_type());
+        std::cout<<"make_xkernel 2b\n"<<std::flush;
         auto context = xeus::make_empty_context();
 
+        std::cout<<"make_xkernel 3\n"<<std::flush;
         xeus::xkernel * kernel = new xeus::xkernel(config,
                              xeus::get_user_name(),
                              std::move(context),
@@ -54,6 +59,7 @@ namespace xeus
                              std::move(hist),
                              nullptr
                              );
+        std::cout<<"make_xkernel 4\n"<<std::flush;
         return std::unique_ptr<xkernel>{kernel};
     }
 
